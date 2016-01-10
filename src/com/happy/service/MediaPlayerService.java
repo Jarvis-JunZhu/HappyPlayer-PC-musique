@@ -217,12 +217,15 @@ public class MediaPlayerService implements Observer {
 				AudioFileReader audioFileReader = TrackIO
 						.getAudioFileReader(songFile.getName());
 				Track track = audioFileReader.read(songFile);
-				long millis = songInfo.getPlayProgress();
-				int seekBytes = AudioMath.millisToSamples((int) millis, track
-						.getTrackData().getSampleRate());
 
 				mediaPlayer.open(track);
-				mediaPlayer.seek(seekBytes);
+				long millis = songInfo.getPlayProgress();
+				if (millis != 0) {
+					isSeekFinish = false;
+					int seekBytes = AudioMath.millisToSamples((int) millis,
+							track.getTrackData().getSampleRate());
+					mediaPlayer.seek(seekBytes);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("不能播放此文件:" + songInfo.getFilePath());
