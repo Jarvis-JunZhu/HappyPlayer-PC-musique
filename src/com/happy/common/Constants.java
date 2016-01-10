@@ -293,5 +293,4 @@ public class Constants {
 	 * 桌面歌词是否锁住
 	 */
 	public static boolean desLrcIsLock = false;
-
 }

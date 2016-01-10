@@ -66,6 +66,10 @@ public class MediaPlayerService implements Observer {
 		logger = LoggerManage.getZhangLogger();
 	}
 
+	public void close() {
+		initPlayer();
+	}
+
 	@Override
 	public void update(Observable o, final Object data) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -255,7 +259,8 @@ public class MediaPlayerService implements Observer {
 		public void run() {
 			while (true) {
 				try {
-					Thread.sleep(100);
+					// 一般情况是100ms去刷新一次，现在基于musique所以，会根据实际情况去刷新
+					Thread.sleep(200);
 					if (mediaPlayer != null && mediaPlayer.isPlaying()
 							&& isSeekFinish) {
 						int status = MediaManage.getMediaManage()

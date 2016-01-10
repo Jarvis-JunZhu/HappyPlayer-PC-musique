@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import com.happy.common.Constants;
 import com.happy.model.MessageIntent;
 import com.happy.observable.ObserverManage;
+import com.happy.service.MediaPlayerService;
 import com.happy.util.DataUtil;
 import com.happy.widget.button.BaseButton;
 
@@ -71,6 +72,7 @@ public class MainMenuPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// 关闭窗口时，保存数据
 				DataUtil.saveData();
+				MediaPlayerService.getMediaPlayerService().close();
 				System.exit(0);
 			}
 		});

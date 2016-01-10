@@ -19,6 +19,7 @@ import com.happy.model.MessageIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
+import com.happy.service.MediaPlayerService;
 import com.happy.util.DataUtil;
 import com.happy.widget.dialog.DesLrcDialog;
 import com.happy.widget.dialog.SkinDialog;
@@ -75,6 +76,7 @@ public class MainFrame extends JFrame implements Observer {
 			public void windowClosing(java.awt.event.WindowEvent evt) {
 				// 关闭窗口时，保存数据
 				DataUtil.saveData();
+				MediaPlayerService.getMediaPlayerService().close();
 				System.exit(0);
 			}
 		});
