@@ -258,11 +258,11 @@ public class ListViewItemHeadPanel extends JPanel {
 
 		addPop = new JPopupMenu();
 		addSongMenu = new JMenuItem("添加歌曲");
-
 		addSongFiledMenu = new JMenuItem("添加歌曲文件");
+		
 		addPop.add(addSongMenu);
 		addPop.add(addSongFiledMenu);
-
+		
 		menuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Thread() {

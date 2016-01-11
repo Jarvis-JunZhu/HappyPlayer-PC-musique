@@ -5,7 +5,11 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-
+/**
+ * 
+ * @author Administrator
+ *
+ */
 public class BaseButton extends JButton {
 
 	/**

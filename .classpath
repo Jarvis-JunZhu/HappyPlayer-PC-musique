@@ -27,6 +27,6 @@
 	<classpathentry exported="true" kind="lib" path="haplayer/libs/musique/tta-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="haplayer/libs/musique/vorbis-java-1.0.0-beta.jar"/>
 	<classpathentry exported="true" kind="lib" path="haplayer/libs/musique/wavpack-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="haplayer/libs/musiqueLib.jar"/>
+	<classpathentry exported="true" kind="lib" path="haplayer/libs/musique-lib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

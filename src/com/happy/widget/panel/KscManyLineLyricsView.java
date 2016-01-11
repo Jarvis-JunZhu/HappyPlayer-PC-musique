@@ -189,7 +189,7 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 
 	// 绘制组件
 	public void paintComponent(Graphics g) {
-		//long begin = System.currentTimeMillis();
+		// long begin = System.currentTimeMillis();
 		Graphics2D g2d = (Graphics2D) g;
 		// 以达到边缘平滑的效果
 
@@ -555,7 +555,8 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 			blScroll = true;
 
 			touchY = tt - touchY;
-			// 该框架的精确度为1s,现在以100ms的方式滑动，会导致快进后，时间不同步的问题
+
+			// 每滑动1单位，当前进度加100ms
 
 			progress = (int) (progress - touchY * 100);
 			if (progress < 0) {

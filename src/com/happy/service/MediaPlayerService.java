@@ -47,9 +47,14 @@ public class MediaPlayerService implements Observer {
 	 */
 	private Thread lrcThread;
 	/**
-	 * 
+	 * 快进是否完成
 	 */
 	private boolean isSeekFinish = true;
+
+	/**
+	 * 当前的基本播放进度
+	 */
+	private long baseCurrentMillis = 0;
 
 	public static MediaPlayerService getMediaPlayerService() {
 		if (_MediaPlayerService == null) {
@@ -99,7 +104,7 @@ public class MediaPlayerService implements Observer {
 	}
 
 	/**
-	 * 初始化声音
+	 * 初始化声音音量
 	 */
 	protected void initVolume() {
 		if (mediaPlayer != null) {
@@ -116,12 +121,21 @@ public class MediaPlayerService implements Observer {
 	private void seekTo(int progress) {
 		try {
 			if (mediaPlayer != null) {
-				isSeekFinish = false;
 
-				int seekBytes = AudioMath.millisToSamples((int) progress,
-						mediaPlayer.getTrack().getTrackData().getSampleRate());
+				// double currentMS = mediaPlayer.getCurrentMillis();
+				// long currentMSProgress = Math.round(currentMS);
+				// baseCurrentMillis = currentMSProgress;
+				isSeekFinish = false;
+				// 结束播放，重新创建一个播放器
+				initPlayer();
+				// 设置歌曲进度
+				songInfo.setPlayProgress(progress);
+				playInfoMusic(songInfo);
 				//
-				mediaPlayer.seek(seekBytes);
+				// int seekBytes = AudioMath.millisToSamples((int) progress,
+				// mediaPlayer.getTrack().getTrackData().getSampleRate());
+				// //
+				// mediaPlayer.seek(seekBytes);
 
 				MediaManage.getMediaManage().setPlayStatus(MediaManage.PLAYING);
 			}
@@ -207,11 +221,19 @@ public class MediaPlayerService implements Observer {
 					@Override
 					public void onEvent(PlayerEvent e) {
 						if (e.getEventCode() == PlayerEventCode.STOPPED) {
+							// 播放结束，播放下一首
 							SongMessage songMessage = new SongMessage();
 							songMessage.setType(SongMessage.NEXTMUSIC);
 							ObserverManage.getObserver()
 									.setMessage(songMessage);
 						} else if (e.getEventCode() == PlayerEventCode.SEEK_FINISHED) {
+							if (mediaPlayer != null) {
+								// 获取快进后的播放进度
+								double currentMS = mediaPlayer
+										.getCurrentMillis();
+								long progress = Math.round(currentMS);
+								baseCurrentMillis = progress;
+							}
 							isSeekFinish = true;
 						}
 					}
@@ -229,6 +251,9 @@ public class MediaPlayerService implements Observer {
 					int seekBytes = AudioMath.millisToSamples((int) millis,
 							track.getTrackData().getSampleRate());
 					mediaPlayer.seek(seekBytes);
+				} else {
+					// 设置基本的进度
+					baseCurrentMillis = 0;
 				}
 			}
 		} catch (Exception e) {
@@ -259,8 +284,7 @@ public class MediaPlayerService implements Observer {
 		public void run() {
 			while (true) {
 				try {
-					// 一般情况是100ms去刷新一次，现在基于musique所以，会根据实际情况去刷新
-					Thread.sleep(200);
+					Thread.sleep(100);
 					if (mediaPlayer != null && mediaPlayer.isPlaying()
 							&& isSeekFinish) {
 						int status = MediaManage.getMediaManage()
@@ -269,13 +293,19 @@ public class MediaPlayerService implements Observer {
 						// 只有当前正在播放才去刷新页面，如果当前正在快进，则不要刷新页面，免得页面出现闪烁
 						if (songInfo != null && status == MediaManage.PLAYING) {
 
-							double currentMS = mediaPlayer.getCurrentMillis();
+							// 由于直接获取当前的进度，在绘画歌词的时候会比较闪烁，所以，我这里采用获取line当前的frame所在的位置，再加上上一次快进的位置，得到当前的位置
+							// 由于这种方法，导致了在快进的时候，要重新创建一个播放器和记录快进后的播放进度
+							// 原谅我目前只想到这种方法
+							double currentMS = mediaPlayer.getAudioOutput()
+									.getCurrentMillis();
 							long progress = Math.round(currentMS);
+							// System.out.println(progress);
 							// 等于0时不刷新，防止快进时闪屏
 							if (progress == 0)
 								continue;
 
-							songInfo.setPlayProgress(progress);
+							songInfo.setPlayProgress(progress
+									+ baseCurrentMillis);
 							SongMessage msg = new SongMessage();
 							msg.setSongInfo(songInfo);
 							msg.setType(SongMessage.SERVICEPLAYINGMUSIC);

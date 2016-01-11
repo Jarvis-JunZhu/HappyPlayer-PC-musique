@@ -2,6 +2,7 @@ package com.happy.common;
 
 import java.awt.Color;
 import java.io.File;
+import java.util.Calendar;
 
 public class Constants {
 	/**
@@ -98,7 +99,7 @@ public class Constants {
 	/**
 	 * app提示语
 	 */
-	public final static String APPTIPTITLE = "乐乐2015,传播好的音乐";
+	public final static String APPTIPTITLE = "乐乐" + getYear() + ",传播好的音乐";
 	/**
 	 * app字体大小
 	 */
@@ -293,4 +294,14 @@ public class Constants {
 	 * 桌面歌词是否锁住
 	 */
 	public static boolean desLrcIsLock = false;
+
+	/**
+	 * 获取年份
+	 * @return
+	 */
+	public static String getYear() {
+		Calendar cal = Calendar.getInstance();
+		int year = cal.get(Calendar.YEAR);
+		return year + "";
+	}
 }

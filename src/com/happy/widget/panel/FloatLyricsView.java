@@ -23,7 +23,11 @@ import com.happy.model.KscLyricsLineInfo;
 import com.happy.model.MessageIntent;
 import com.happy.observable.ObserverManage;
 import com.happy.util.KscLyricsParserUtil;
-
+/**
+ * 桌面双行歌词
+ * @author Administrator
+ *
+ */
 public class FloatLyricsView extends JPanel implements Observer {
 	/**
 	 * 

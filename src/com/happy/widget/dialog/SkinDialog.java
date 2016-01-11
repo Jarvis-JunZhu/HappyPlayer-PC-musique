@@ -32,7 +32,11 @@ import com.happy.widget.panel.ScrollBarUI;
 import com.happy.widget.panel.SkinListPanel;
 import com.happy.widget.panel.TitleBackGroundPanel;
 import com.happy.widget.slider.TranSlider;
-
+/**
+ * 皮肤窗口
+ * @author Administrator
+ *
+ */
 public class SkinDialog extends JDialog implements Observer {
 
 	/**

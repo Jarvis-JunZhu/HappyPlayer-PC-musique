@@ -14,6 +14,12 @@ import org.apache.log4j.RollingFileAppender;
 
 import com.happy.common.Constants;
 
+/**
+ * 日志处理类
+ * 
+ * @author Administrator
+ * 
+ */
 public class LoggerManage {
 	/**
 	 * 是否输出log
@@ -61,9 +67,9 @@ public class LoggerManage {
 			// 文件
 			rollingFileAppender = new RollingFileAppender(layout, path, true);
 			rollingFileAppender.setEncoding("utf-8");
-			//只有一个文件
+			// 只有一个文件
 			rollingFileAppender.setMaxBackupIndex(0);
-			//500kb
+			// 500kb
 			rollingFileAppender.setMaximumFileSize(1024 * 500);
 			// 控件台输出
 			ConsoleAppender consoleAppender = new ConsoleAppender(layout);

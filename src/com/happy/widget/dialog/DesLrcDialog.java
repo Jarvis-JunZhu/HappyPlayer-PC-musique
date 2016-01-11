@@ -146,6 +146,11 @@ public class DesLrcDialog extends JDialog implements Observer {
 
 	}
 
+	/**
+	 * 窗口鼠标事件
+	 * @author Administrator
+	 *
+	 */
 	private class DesLrcDialogMouseListener implements MouseInputListener {
 
 		@Override

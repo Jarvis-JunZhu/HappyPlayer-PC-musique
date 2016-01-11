@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import com.happy.common.Constants;
-import com.happy.event.MainFrameMoveEvent;
+import com.happy.event.PanelMoveFrame;
 import com.happy.model.MessageIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
@@ -107,13 +107,13 @@ public class MainFrame extends JFrame implements Observer {
 		Constants.mainPanelHeight = Constants.mainFrameHeight;
 		MainPanel mainPanel = new MainPanel(desktopLrcDialog);
 		// 添加拖动事件
-		new MainFrameMoveEvent(mainPanel, this);
+		new PanelMoveFrame(mainPanel, this);
 		mainPanel.setBounds(0, 0, Constants.mainPanelWidth,
 				Constants.mainPanelHeight);
 
 		// 主菜单面板
 		MainMenuPanel mainMenuPanel = new MainMenuPanel();
-		new MainFrameMoveEvent(mainMenuPanel, this);
+		new PanelMoveFrame(mainMenuPanel, this);
 
 		int mainMenuPanelWidth = Constants.mainFrameWidth
 				- Constants.mainPanelWidth;
