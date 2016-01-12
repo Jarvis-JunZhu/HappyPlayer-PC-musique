@@ -98,7 +98,7 @@ public class MediaManage implements Observer {
 			songlist = new ArrayList<SongInfo>();
 			// 加载默认歌曲
 			String defFilePath = Constants.PATH_MP3 + File.separator
-					+ "姚贝娜 - 可以不可以.mp3";
+					+ "蔡健雅 - Beautiful Love.mp3";
 			File defFile = new File(defFilePath);
 			if (defFile.exists()) {
 				SongInfo songInfo = MediaUtils.getSongInfoByFile(defFilePath);
@@ -337,8 +337,9 @@ public class MediaManage implements Observer {
 		switch (playModel) {
 		case 0:
 
-			playIndex++;
-			if (playIndex >= songlist.size()) {
+			// playIndex++;
+			playIndex = getNextPlaySequenceIndex(playIndex);
+			if (playIndex == -1 || playIndex >= songlist.size()) {
 				stopToPlay();
 				return;
 			}
@@ -353,7 +354,12 @@ public class MediaManage implements Observer {
 		case 1:
 			// 随机播放
 
-			playIndex = new Random().nextInt(songlist.size());
+			// playIndex = new Random().nextInt(songlist.size());
+			playIndex = getPlayRandomIndex();
+			if (playIndex == -1 || playIndex >= songlist.size()) {
+				stopToPlay();
+				return;
+			}
 			if (songlist.size() != 0) {
 				songInfo = songlist.get(playIndex);
 			} else {
@@ -364,9 +370,14 @@ public class MediaManage implements Observer {
 		case 2:
 			// 循环播放
 
-			playIndex++;
-			if (playIndex >= songlist.size()) {
-				playIndex = 0;
+			// playIndex++;
+			playIndex = getNextPlayListRepeatIndex(playIndex);
+			// if (playIndex >= songlist.size()) {
+			// playIndex = 0;
+			// }
+			if (playIndex == -1 || playIndex >= songlist.size()) {
+				stopToPlay();
+				return;
 			}
 
 			if (songlist.size() != 0) {
@@ -407,9 +418,64 @@ public class MediaManage implements Observer {
 	}
 
 	/**
+	 * 
+	 * @param playIndex
+	 * @return
+	 */
+	private int getPlayRandomIndex() {
+		int index = new Random().nextInt(songlist.size());
+		for (int i = index; i < songlist.size(); i++) {
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 获取列表循环播放的下一首的索引
+	 * 
+	 * @param oldPlayIndex
+	 * @return
+	 */
+	private int getNextPlayListRepeatIndex(int oldPlayIndex) {
+		for (int i = oldPlayIndex + 1; i < songlist.size(); i++) {
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		for (int i = 0; i < songlist.size(); i++) {
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 获取顺序播放的下一首的索引
+	 * 
+	 * @param oldPlayIndex
+	 *            旧的索引
+	 * @return
+	 */
+	private int getNextPlaySequenceIndex(int oldPlayIndex) {
+		for (int i = oldPlayIndex + 1; i < songlist.size(); i++) {
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
 	 * 停止当前播放
 	 */
-	private void stopToPlay() {
+	public void stopToPlay() {
 		playStatus = PAUSE;
 		// 结束播放保存歌曲索引
 
@@ -422,7 +488,7 @@ public class MediaManage implements Observer {
 		eventIntent.setClickCount(EventIntent.DOUBLECLICK);
 		ObserverManage.getObserver().setMessage(eventIntent);
 
-		songInfo = null;
+		// songInfo = null;
 
 		// 结束播放
 
@@ -448,11 +514,13 @@ public class MediaManage implements Observer {
 		switch (playModel) {
 		case 0:
 			// 顺序播放
-			playIndex--;
-			if (playIndex < 0) {
+			// playIndex--;
+			playIndex = getPrePlaySequenceIndex(playIndex);
+			if (playIndex == -1 || playIndex >= songlist.size()) {
 				stopToPlay();
 				return;
 			}
+
 			if (songlist.size() != 0) {
 				songInfo = songlist.get(playIndex);
 			} else {
@@ -464,7 +532,12 @@ public class MediaManage implements Observer {
 		case 1:
 			// 随机播放
 
-			playIndex = new Random().nextInt(songlist.size());
+			// playIndex = new Random().nextInt(songlist.size());
+			playIndex = getPlayRandomIndex();
+			if (playIndex == -1 || playIndex >= songlist.size()) {
+				stopToPlay();
+				return;
+			}
 
 			if (songlist.size() != 0) {
 				songInfo = songlist.get(playIndex);
@@ -472,20 +545,26 @@ public class MediaManage implements Observer {
 				stopToPlay();
 				return;
 			}
+			break;
 		case 2:
 			// 循环播放
 
-			playIndex--;
-			if (playIndex < 0) {
-				playIndex = 0;
+			// playIndex--;
+			// if (playIndex < 0) {
+			// playIndex = 0;
+			// }
+			playIndex = getPrePlayListRepeatIndex(playIndex);
+			if (playIndex == -1 || playIndex >= songlist.size()) {
+				stopToPlay();
+				return;
 			}
-
 			if (songlist.size() != 0) {
 				songInfo = songlist.get(playIndex);
 			} else {
 				stopToPlay();
 				return;
 			}
+			break;
 		case 3:
 			// 单曲播放
 			stopToPlay();
@@ -517,6 +596,50 @@ public class MediaManage implements Observer {
 		playInfoMusic(songInfo, isInit);
 	}
 
+	/**
+	 * 获取列表循环播放上一首
+	 * 
+	 * @param oldPlayIndex
+	 * @return
+	 */
+	private int getPrePlayListRepeatIndex(int oldPlayIndex) {
+		for (int i = oldPlayIndex - 1; i >= 0; i--) {
+			if (i < 0)
+				break;
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		for (int i = songlist.size() - 1; i >= 0; i--) {
+			if (i < 0)
+				break;
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 获取顺序播放上一首
+	 * 
+	 * @param oldPlayIndex
+	 * @return
+	 */
+	private int getPrePlaySequenceIndex(int oldPlayIndex) {
+		for (int i = oldPlayIndex - 1; i >= 0; i--) {
+			if (i < 0)
+				break;
+			SongInfo songInfo = songlist.get(i);
+			if (songInfo.getStatus() != SongInfo.DEL) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	public int getPindex() {
 		return pindex;
 	}
@@ -537,4 +660,7 @@ public class MediaManage implements Observer {
 		return songInfo;
 	}
 
+	public void setSongInfo(SongInfo songInfo) {
+		this.songInfo = songInfo;
+	}
 }

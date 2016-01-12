@@ -443,27 +443,31 @@ public class DataUtil {
 				.getmCategorys();
 
 		Properties playlistProperties = new Properties();
-		// 保存列表数目
-		playlistProperties
-				.put("playlistnum", String.valueOf(mCategorys.size()));
 
+		int size = 0;
 		for (int i = 0; i < mCategorys.size(); i++) {
 
 			Category category = mCategorys.get(i);
+			if (category.getStatus() == Category.DEL)
+				continue;
 
-			playlistProperties.put("listname" + i, category.getmCategoryName());
+			playlistProperties.put("listname" + size,
+					category.getmCategoryName());
 
 			List<SongInfo> mSongInfo = category.getmCategoryItem();
 			Properties songlistProperties = new Properties();
-			songlistProperties.put("songnum", String.valueOf(mSongInfo.size()));
 
 			String songlistFilePath = Constants.PATH_PLAYLISTDATA
-					+ File.separator + songListDataFileName + i + ".properties";
+					+ File.separator + songListDataFileName + size
+					+ ".properties";
 
 			File songlistFile = new File(songlistFilePath);
 
+			int sSize = 0;
 			for (int j = 0; j < mSongInfo.size(); j++) {
 				SongInfo songInfo = mSongInfo.get(j);
+				if (songInfo.getStatus() == SongInfo.DEL)
+					continue;
 
 				try {
 					Class<SongInfo> songInfoClazz = SongInfo.class;
@@ -479,16 +483,16 @@ public class DataUtil {
 						if (data != null) {
 							if (data instanceof String) {
 								String value = (String) data;
-								songlistProperties.put(name + j, value);
+								songlistProperties.put(name + sSize, value);
 							} else if (data instanceof Integer) {
 								Integer valueTemp = (Integer) data;
 								int value = valueTemp.intValue();
-								songlistProperties.put(name + j,
+								songlistProperties.put(name + sSize,
 										String.valueOf(value));
 							} else if (data instanceof Long) {
 								Long valueTemp = (Long) data;
 								long value = valueTemp.longValue();
-								songlistProperties.put(name + j,
+								songlistProperties.put(name + sSize,
 										String.valueOf(value));
 							}
 						}
@@ -497,10 +501,12 @@ public class DataUtil {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				sSize++;
 			}
+			songlistProperties.put("songnum", String.valueOf(sSize));
 			try {
 				FileOutputStream out = new FileOutputStream(songlistFile);
-				songlistProperties.store(out, songListDataFileName + i
+				songlistProperties.store(out, songListDataFileName + size
 						+ ".properties");
 				out.close();
 			} catch (Exception e) {
@@ -509,7 +515,13 @@ public class DataUtil {
 				songlistFile.deleteOnExit();
 			}
 
+			size++;
+
 		}
+
+		// 保存列表数目
+		playlistProperties.put("playlistnum", String.valueOf(size));
+
 		try {
 			FileOutputStream out = new FileOutputStream(playListDataFilePath);
 			playlistProperties.store(out, playListDataFileName);

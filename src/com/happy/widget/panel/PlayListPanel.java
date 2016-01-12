@@ -181,7 +181,7 @@ public class PlayListPanel extends JPanel implements Observer {
 	private void refreshListViewItemComPanelUI(int pindex, int sindex,
 			ListViewItemComPanel listViewItemComPanel, SongInfo songInfo) {
 		ListViewItemComItemPanel listViewItemComItemPanel = new ListViewItemComItemPanel(
-				this, pindex, sindex, songInfo, width);
+				this, listViewPanel, pindex, sindex, songInfo, width);
 		listViewItemComPanel.add(listViewItemComItemPanel);
 	}
 

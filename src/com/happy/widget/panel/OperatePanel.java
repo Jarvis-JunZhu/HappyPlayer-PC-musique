@@ -701,18 +701,20 @@ public class OperatePanel extends JPanel implements Observer {
 		}
 
 		ImageIcon icon = new ImageIcon(iconPath + sound_normalPath);
-		icon.setImage(icon.getImage().getScaledInstance(baseButtonSize *3/2,
-				baseButtonSize *3/2, Image.SCALE_SMOOTH));
+		icon.setImage(icon.getImage().getScaledInstance(baseButtonSize * 3 / 2,
+				baseButtonSize * 3 / 2, Image.SCALE_SMOOTH));
 		volumeButton.setIcon(icon);
 
 		ImageIcon hotIcon = new ImageIcon(iconPath + sound_hotPath);
 		hotIcon.setImage(hotIcon.getImage().getScaledInstance(
-				baseButtonSize *3/2, baseButtonSize *3/2, Image.SCALE_SMOOTH));
+				baseButtonSize * 3 / 2, baseButtonSize * 3 / 2,
+				Image.SCALE_SMOOTH));
 		volumeButton.setRolloverIcon(hotIcon);
 
 		ImageIcon dowmIcon = new ImageIcon(iconPath + sound_downPath);
 		dowmIcon.setImage(dowmIcon.getImage().getScaledInstance(
-				baseButtonSize *3/2, baseButtonSize*3/2, Image.SCALE_SMOOTH));
+				baseButtonSize * 3 / 2, baseButtonSize * 3 / 2,
+				Image.SCALE_SMOOTH));
 		volumeButton.setPressedIcon(dowmIcon);
 	}
 
@@ -904,6 +906,5 @@ public class OperatePanel extends JPanel implements Observer {
 					.setVisible(false);
 
 		}
-
 	}
 }

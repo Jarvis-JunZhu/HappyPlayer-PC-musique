@@ -6,6 +6,18 @@ package com.happy.model;
  * 
  */
 public class SongInfo {
+	/**
+	 * 基本状态
+	 */
+	public static final int DEF = 0;
+	/**
+	 * 删除
+	 */
+	public static final int DEL = 1;
+	/**
+	 * 状态
+	 */
+	private int status = DEF;
 	/***
 	 * 本地歌曲
 	 */
@@ -228,6 +240,14 @@ public class SongInfo {
 
 	public void setPlayProgress(long playProgress) {
 		this.playProgress = playProgress;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	// public int getDownloadStatus() {

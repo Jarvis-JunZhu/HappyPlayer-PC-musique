@@ -1,9 +1,7 @@
 package com.happy.util;
 
 import java.awt.Font;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.File;
 
 /**
  * 字体处理类
@@ -23,18 +21,11 @@ public class FontsUtil {
 	public static Font getFontByFile(String filePath, int fontSize) {
 		Font font = null;
 		try {
-			InputStream is = new FileInputStream(filePath);
-			BufferedInputStream bis = new BufferedInputStream(is);
-			// createFont返回一个使用指定字体类型和输入数据的新 Font。<br>
-			// 新 Font磅值为 1，样式为 PLAIN,注意 此方法不会关闭 InputStream
-			font = Font.createFont(Font.TRUETYPE_FONT, bis);
+
+			// 推荐用这种，原因请详细看http://www.cnblogs.com/zcy_soft/p/3503656.html
+			font = Font.createFont(Font.TRUETYPE_FONT, new File(filePath));
 			font = font.deriveFont(Font.CENTER_BASELINE, fontSize);
-			if (null != bis) {
-				bis.close();
-			}
-			if (null != is) {
-				is.close();
-			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

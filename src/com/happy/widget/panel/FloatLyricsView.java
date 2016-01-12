@@ -22,11 +22,14 @@ import com.happy.common.Constants;
 import com.happy.model.KscLyricsLineInfo;
 import com.happy.model.MessageIntent;
 import com.happy.observable.ObserverManage;
+import com.happy.util.FontsUtil;
 import com.happy.util.KscLyricsParserUtil;
+
 /**
  * 桌面双行歌词
+ * 
  * @author Administrator
- *
+ * 
  */
 public class FloatLyricsView extends JPanel implements Observer {
 	/**
@@ -124,7 +127,11 @@ public class FloatLyricsView extends JPanel implements Observer {
 
 	// 统一字体
 	String fontFilePath = Constants.PATH_FONTS + File.separator
-			+ "weiruanyahei14M.ttf";
+			+ "kaiti.ttf";
+	/**
+	 * 字体
+	 */
+	private Font baseFont;
 
 	public FloatLyricsView(int width, int height,
 			MouseInputListener desLrcDialogMouseListener) {
@@ -184,6 +191,9 @@ public class FloatLyricsView extends JPanel implements Observer {
 				/ Constants.desktopLrcFontMaxSize;
 
 		INTERVAL = (float) (height - SCALEIZEWORDDEF * 2) / 3;
+		
+		baseFont = FontsUtil
+		.getFontByFile(fontFilePath, (int) SCALEIZEWORDDEF);
 	}
 
 	// 绘制组件
@@ -200,7 +210,8 @@ public class FloatLyricsView extends JPanel implements Observer {
 				RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setRenderingHints(renderHints);
 		//
-		g2d.setFont(new Font("宋体", Font.BOLD, (int) SCALEIZEWORDDEF));
+		// g2d.setFont(new Font("宋体", Font.BOLD, (int) SCALEIZEWORDDEF));
+		g2d.setFont(baseFont);
 
 		if (isEnter || isShow) {
 			g2d.setPaint(new Color(0, 0, 0, 100));

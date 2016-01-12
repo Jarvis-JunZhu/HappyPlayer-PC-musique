@@ -10,6 +10,18 @@ import java.util.List;
  * 
  */
 public class Category {
+	/**
+	 * 基本状态
+	 */
+	public static final int DEF = 0;
+	/**
+	 * 删除
+	 */
+	public static final int DEL = 1;
+	/**
+	 * 状态
+	 */
+	private int status = DEF;
 
 	/**
 	 * 分类名
@@ -56,4 +68,13 @@ public class Category {
 	public void setmCategoryItem(List<SongInfo> mCategoryItem) {
 		this.mCategoryItem = mCategoryItem;
 	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 }

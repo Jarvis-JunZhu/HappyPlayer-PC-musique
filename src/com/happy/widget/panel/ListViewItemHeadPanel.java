@@ -85,7 +85,7 @@ public class ListViewItemHeadPanel extends JPanel {
 	/**
 	 * 
 	 */
-	private JPanel listViewJPanel;
+	private JPanel playListPanel;
 	/**
 	 * 歌曲内容面板
 	 */
@@ -109,6 +109,10 @@ public class ListViewItemHeadPanel extends JPanel {
 	 * 定义一个添加歌曲文件菜单
 	 */
 	public JMenuItem addSongFiledMenu;
+	/**
+	 * 删除播放列表菜单
+	 */
+	public JMenuItem delPlaylistMenu;
 
 	/**
 	 * 歌曲文件数组
@@ -127,17 +131,17 @@ public class ListViewItemHeadPanel extends JPanel {
 	/**
 	 * listview内容面板
 	 */
-	private JPanel listViewComJPanel;
+	private JPanel listViewPanel;
 
-	public ListViewItemHeadPanel(JPanel mlistViewJPanel,
-			JPanel mlistViewComJPanel, int width, String titleName, int size,
+	public ListViewItemHeadPanel(JPanel mplayListPanel, JPanel mlistViewPanel,
+			int width, String titleName, int size,
 			ListViewItemComPanel listViewItemComPanel,
 			List<SongInfo> mSongInfo, int index) {
 		this.pindex = index;
 		this.mSongInfo = mSongInfo;
-		this.listViewComJPanel = mlistViewComJPanel;
+		this.listViewPanel = mlistViewPanel;
 		this.listViewItemComPanel = listViewItemComPanel;
-		this.listViewJPanel = mlistViewJPanel;
+		this.playListPanel = mplayListPanel;
 		this.width = width;
 		this.titleName = titleName;
 		this.size = size;
@@ -195,9 +199,9 @@ public class ListViewItemHeadPanel extends JPanel {
 			// 隐藏歌曲列表内容
 			listViewItemComPanel.setVisible(false);
 		}
-		// listViewJPanel.revalidate();
-		// listViewJPanel.repaint();
-		listViewJPanel.updateUI();
+		// playListPanel.revalidate();
+		// playListPanel.repaint();
+		playListPanel.updateUI();
 	}
 
 	public boolean getShow() {
@@ -259,10 +263,17 @@ public class ListViewItemHeadPanel extends JPanel {
 		addPop = new JPopupMenu();
 		addSongMenu = new JMenuItem("添加歌曲");
 		addSongFiledMenu = new JMenuItem("添加歌曲文件");
-		
+
+		delPlaylistMenu = new JMenuItem("删除播放列表");
+
 		addPop.add(addSongMenu);
 		addPop.add(addSongFiledMenu);
-		
+		if (pindex != 0) {
+			addPop.addSeparator();
+			addPop.add(delPlaylistMenu);
+		}
+
+		//
 		menuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new Thread() {
@@ -275,37 +286,38 @@ public class ListViewItemHeadPanel extends JPanel {
 			}
 		});
 
+		//
 		menuButton.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// listViewJPanel.revalidate();
-				listViewJPanel.repaint();
-				// listViewJPanel.updateUI();
+				// playListPanel.revalidate();
+				playListPanel.repaint();
+				// playListPanel.updateUI();
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// listViewJPanel.revalidate();
-				listViewJPanel.repaint();
+				// playListPanel.revalidate();
+				playListPanel.repaint();
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// listViewJPanel.revalidate();
-				listViewJPanel.repaint();
+				// playListPanel.revalidate();
+				playListPanel.repaint();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// listViewJPanel.revalidate();
-				listViewJPanel.repaint();
+				// playListPanel.revalidate();
+				playListPanel.repaint();
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// listViewJPanel.revalidate();
-				// listViewJPanel.repaint();
+				// playListPanel.revalidate();
+				// playListPanel.repaint();
 			}
 		});
 
@@ -342,7 +354,7 @@ public class ListViewItemHeadPanel extends JPanel {
 							for (int i = 0; i < songfiles.length; i++) {// 支持多选
 								File file = songfiles[i];
 								String filePath = file.getPath();
-								if (!isSongExists(filePath)) {
+								if (!isSongExists(filePath, mSongInfo)) {
 									hasUpdate = true;
 									SongInfo songInfo = MediaUtils
 											.getSongInfoByFile(filePath);
@@ -360,10 +372,10 @@ public class ListViewItemHeadPanel extends JPanel {
 							}
 							if (hasUpdate) {
 
-								// listViewJPanel.revalidate();
-								// listViewJPanel.repaint();
+								// playListPanel.revalidate();
+								// playListPanel.repaint();
 
-								listViewJPanel.updateUI();
+								playListPanel.updateUI();
 
 								MediaManage.getMediaManage()
 										.upDateSongListData(pindex, mSongInfo);
@@ -371,8 +383,8 @@ public class ListViewItemHeadPanel extends JPanel {
 							}
 						} else if (result == JFileChooser.CANCEL_OPTION) {
 						}
-						// listViewJPanel.revalidate();
-						// listViewJPanel.repaint();
+						// playListPanel.revalidate();
+						// playListPanel.repaint();
 
 					}
 				}.start();
@@ -413,11 +425,70 @@ public class ListViewItemHeadPanel extends JPanel {
 			}
 		});
 
+		delPlaylistMenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Thread() {
+
+					@Override
+					public void run() {
+						new Thread() {
+
+							@Override
+							public void run() {
+								int result = JOptionPane.showConfirmDialog(
+										ListViewItemHeadPanel.this,
+										"确认删除该播放列表?", "确认",
+										JOptionPane.OK_CANCEL_OPTION,
+										JOptionPane.INFORMATION_MESSAGE);
+								if (result == JOptionPane.OK_OPTION) {
+									removePlayListByPIndex(pindex);
+								}
+							}
+						}.start();
+					}
+				}.start();
+			}
+		});
+
 		this.add(statusLeftJLabel);
 		this.add(statusDownJLabel);
 		this.add(titleNameJLabel);
 		this.add(menuButton);
 
+	}
+
+	/**
+	 * 删除播放列表
+	 * 
+	 * @param pindex
+	 */
+	private void removePlayListByPIndex(int pindex) {
+		if (pindex >= listViewPanel.getComponentCount())
+			return;
+
+		int currentPIndex = MediaManage.getMediaManage().getPindex();
+		if (pindex == currentPIndex) {
+			MediaManage.getMediaManage().stopToPlay();
+			MediaManage.getMediaManage().setSongInfo(null);
+			// 当前播放列表含有当前播放的歌曲
+			MediaManage.getMediaManage().setPindex(-1);
+			MediaManage.getMediaManage().setSindex(-1);
+		}
+
+		// 更新数据
+		List<Category> categorys = MediaManage.getMediaManage().getmCategorys();
+		Category category = categorys.get(pindex);
+		category.setStatus(Category.DEL);
+		categorys.remove(pindex);
+		categorys.add(pindex, category);
+		MediaManage.getMediaManage().setmCategorys(categorys);
+
+		// 更新ui,在这里只是对播放列表进行隐藏处理，不做删除处理
+		listViewPanel.getComponent(pindex).setVisible(false);
+		listViewPanel.validate();
+		listViewPanel.repaint();
+		listViewPanel.updateUI();
+		playListPanel.updateUI();
 	}
 
 	/**
@@ -453,7 +524,7 @@ public class ListViewItemHeadPanel extends JPanel {
 		//
 		// 列表标题面板
 		ListViewItemHeadPanel listViewItemHeadPanel = new ListViewItemHeadPanel(
-				listViewJPanel, listViewComJPanel, width, playlistname, size,
+				playListPanel, listViewPanel, width, playlistname, size,
 				listViewItemComPanel, songInfos, i);
 
 		// listviewitem面板
@@ -461,11 +532,11 @@ public class ListViewItemHeadPanel extends JPanel {
 		itemPanel.add(listViewItemHeadPanel, 0);
 		itemPanel.add(listViewItemComPanel, 1);
 
-		listViewComJPanel.add(itemPanel);
-		// listViewJPanel.revalidate();
-		// listViewJPanel.repaint();
+		listViewPanel.add(itemPanel);
+		// playListPanel.revalidate();
+		// playListPanel.repaint();
 
-		listViewJPanel.updateUI();
+		playListPanel.updateUI();
 
 		// 更新数据
 		category.setmCategoryItem(songInfos);
@@ -488,9 +559,9 @@ public class ListViewItemHeadPanel extends JPanel {
 
 			@Override
 			public void run() {
-				if (pindex >= listViewComJPanel.getComponentCount())
+				if (pindex >= listViewPanel.getComponentCount())
 					return;
-				ListViewItemPanel itemPanel = (ListViewItemPanel) listViewComJPanel
+				ListViewItemPanel itemPanel = (ListViewItemPanel) listViewPanel
 						.getComponent(pindex);
 				ListViewItemHeadPanel listViewItemHeadPanel = (ListViewItemHeadPanel) itemPanel
 						.getComponent(0);
@@ -505,7 +576,7 @@ public class ListViewItemHeadPanel extends JPanel {
 							|| !AudioFilter.acceptFilter(file))
 						continue;
 					String filePath = file.getPath();
-					if (!isSongExists(filePath)) {
+					if (!isSongExists(filePath, songInfos)) {
 						hasUpdate = true;
 						SongInfo songInfo = MediaUtils
 								.getSongInfoByFile(filePath);
@@ -523,7 +594,7 @@ public class ListViewItemHeadPanel extends JPanel {
 					}
 				}
 				if (hasUpdate) {
-					listViewJPanel.updateUI();
+					playListPanel.updateUI();
 					MediaManage.getMediaManage().upDateSongListData(pindex,
 							songInfos);
 				}
@@ -542,7 +613,7 @@ public class ListViewItemHeadPanel extends JPanel {
 	private void refreshListViewItemComPanelUI(int pindex, int sindex,
 			ListViewItemComPanel listViewItemComPanel, SongInfo songInfo) {
 		ListViewItemComItemPanel listViewItemComItemPanel = new ListViewItemComItemPanel(
-				listViewJPanel, pindex, sindex, songInfo, width);
+				playListPanel, listViewPanel, pindex, sindex, songInfo, width);
 		listViewItemComPanel.add(listViewItemComItemPanel);
 	}
 
@@ -550,11 +621,14 @@ public class ListViewItemHeadPanel extends JPanel {
 	 * 判断歌曲文件是否存在
 	 * 
 	 * @param filePath
+	 * @param mSongInfo
 	 * @return
 	 */
-	protected boolean isSongExists(String filePath) {
+	protected boolean isSongExists(String filePath, List<SongInfo> mSongInfo) {
 		for (int i = 0; i < mSongInfo.size(); i++) {
 			SongInfo tempSongInfo = mSongInfo.get(i);
+			if (tempSongInfo.getStatus() == SongInfo.DEL)
+				continue;
 			if (tempSongInfo.getFilePath().equals(filePath)) {
 				return true;
 			}
