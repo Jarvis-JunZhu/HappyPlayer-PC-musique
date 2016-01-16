@@ -248,8 +248,8 @@ public class MediaPlayerService implements Observer {
 				long millis = songInfo.getPlayProgress();
 				if (millis != 0) {
 					isSeekFinish = false;
-					int seekBytes = AudioMath.millisToSamples((int) millis,
-							track.getTrackData().getSampleRate());
+					long seekBytes = AudioMath.millisToSamples(millis, track
+							.getTrackData().getSampleRate());
 					mediaPlayer.seek(seekBytes);
 				} else {
 					// 设置基本的进度

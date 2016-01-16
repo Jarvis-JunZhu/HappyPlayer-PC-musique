@@ -27,7 +27,7 @@ public class Constants {
 	/**
 	 * 歌曲目录
 	 */
-	public final static String PATH_MP3 = PATH_TEMP + File.separator + "mp3";
+	public final static String PATH_AUDIO = PATH_TEMP + File.separator + "audio";
 
 	/**
 	 * 歌词目录

@@ -256,7 +256,7 @@ public class ListViewItemComItemPanel extends JPanel {
 		songSize = new JLabel(songInfo.getDurationStr());
 
 		String singerIconPath = Constants.PATH_ICON + File.separator
-				+ "singer_default_image.png";
+				+ "ic_launcher.png";
 		ImageIcon singerIcon = new ImageIcon(singerIconPath);
 		singerIcon.setImage(singerIcon.getImage().getScaledInstance(
 				height * 2 / 3, height * 2 / 3, Image.SCALE_SMOOTH));
@@ -304,7 +304,7 @@ public class ListViewItemComItemPanel extends JPanel {
 					@Override
 					public void run() {
 						int result = JOptionPane.showConfirmDialog(
-								ListViewItemComItemPanel.this, "确认删除该歌曲?",
+								ListViewItemComItemPanel.this, "删除该歌曲?",
 								"确认", JOptionPane.OK_CANCEL_OPTION,
 								JOptionPane.INFORMATION_MESSAGE);
 						if (result == JOptionPane.OK_OPTION) {

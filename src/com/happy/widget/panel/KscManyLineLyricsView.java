@@ -657,13 +657,12 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 				oldOffsetY = height / 2 - (SCALEIZEWORDDEF + INTERVAL)
 						* lyricsLineNum + sy;
 			}
+			// 另一行歌词，所以把之前设置的高亮移动显示的x坐标设置为0
+			highLightLrcMoveX = 0;
 			// 每次view刷新时移动往上下移动的距离,设置时间，就会有动画的效果
 			float dy = kscLyricsParser.getOffsetDYFromCurPlayingTime(
 					lyricsLineNum, playProgress, sy);
 			offsetY = oldOffsetY - dy;
-
-			// 另一行歌词，所以把之前设置的高亮移动显示的x坐标设置为0
-			highLightLrcMoveX = 0;
 
 			if (newLyricsLineNum > lyricsLineNum) {
 				oldLyricsLineNum = newLyricsLineNum + 1;

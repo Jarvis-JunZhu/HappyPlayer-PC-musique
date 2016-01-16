@@ -437,7 +437,7 @@ public class ListViewItemHeadPanel extends JPanel {
 							public void run() {
 								int result = JOptionPane.showConfirmDialog(
 										ListViewItemHeadPanel.this,
-										"确认删除该播放列表?", "确认",
+										"删除该播放列表?", "确认",
 										JOptionPane.OK_CANCEL_OPTION,
 										JOptionPane.INFORMATION_MESSAGE);
 								if (result == JOptionPane.OK_OPTION) {

@@ -58,7 +58,7 @@ public class MainMenuPanel extends JPanel {
 		String closeButtonOverIconPath = iconPath + "close_hot.png";
 		String closeButtonPressedIconPath = iconPath + "close_down.png";
 
-		int buttonSize = mainMenuPanelHeight / 3 * 2;
+		int buttonSize = mainMenuPanelHeight / 5 * 3;
 
 		int buttonY = (mainMenuPanelHeight - buttonSize) / 2;
 
@@ -98,11 +98,6 @@ public class MainMenuPanel extends JPanel {
 			}
 		});
 
-		// 分隔线
-		JLabel lineLabel = new JLabel("|");
-		lineLabel.setForeground(new Color(255, 255, 255, 150));
-		lineLabel.setBounds(minButton.getX() - 15, buttonY, 15, buttonSize);
-
 		// 皮肤
 		String skinButtonBaseIconPath = iconPath + "skin_normal.png";
 		String skinButtonOverIconPath = iconPath + "skin_hot.png";
@@ -111,8 +106,8 @@ public class MainMenuPanel extends JPanel {
 		BaseButton skinButton = new BaseButton(skinButtonBaseIconPath,
 				skinButtonOverIconPath, skinButtonPressedIconPath, buttonSize,
 				buttonSize);
-		skinButton.setBounds(lineLabel.getX() - lineLabel.getWidth()
-				- buttonSize, buttonY, buttonSize, buttonSize);
+		skinButton.setBounds(minButton.getX() - minButton.getWidth() - rightPad
+				* 2, buttonY, buttonSize, buttonSize);
 		skinButton.setToolTipText("皮肤");
 		skinButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -123,14 +118,8 @@ public class MainMenuPanel extends JPanel {
 			}
 		});
 
-		MenuBackGroundPanel menuBackGroundPanel = new MenuBackGroundPanel();
-		menuBackGroundPanel.setBounds(0, 0, mainMenuPanelWidth,
-				mainMenuPanelHeight);
-
 		this.add(minButton);
 		this.add(closeButton);
-		this.add(lineLabel);
 		this.add(skinButton);
-		this.add(menuBackGroundPanel);
 	}
 }

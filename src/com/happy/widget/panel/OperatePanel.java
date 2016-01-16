@@ -340,8 +340,8 @@ public class OperatePanel extends JPanel implements Observer {
 		// 单曲播放
 
 		String singleButtonBaseIconPath = iconPath + "01_1.png";
-		String singleButtonOverIconPath = iconPath + "01_2.png";
-		String singleButtonPressedIconPath = iconPath + "01_3.png";
+		String singleButtonOverIconPath = iconPath + "02_1.png";
+		String singleButtonPressedIconPath = iconPath + "03_1.png";
 		singleButton = new BaseButton(singleButtonBaseIconPath,
 				singleButtonOverIconPath, singleButtonPressedIconPath,
 				baseButtonSize, baseButtonSize);
@@ -362,9 +362,9 @@ public class OperatePanel extends JPanel implements Observer {
 		});
 
 		// 单曲循环
-		String singleRepeatButtonBaseIconPath = iconPath + "02_1.png";
+		String singleRepeatButtonBaseIconPath = iconPath + "01_2.png";
 		String singleRepeatButtonOverIconPath = iconPath + "02_2.png";
-		String singleRepeatButtonPressedIconPath = iconPath + "02_3.png";
+		String singleRepeatButtonPressedIconPath = iconPath + "03_2.png";
 		singleRepeatButton = new BaseButton(singleRepeatButtonBaseIconPath,
 				singleRepeatButtonOverIconPath,
 				singleRepeatButtonPressedIconPath, baseButtonSize,
@@ -387,8 +387,8 @@ public class OperatePanel extends JPanel implements Observer {
 
 		// 顺序播放
 
-		String sequenceButtonBaseIconPath = iconPath + "03_1.png";
-		String sequenceButtonOverIconPath = iconPath + "03_2.png";
+		String sequenceButtonBaseIconPath = iconPath + "01_3.png";
+		String sequenceButtonOverIconPath = iconPath + "02_3.png";
 		String sequenceButtonPressedIconPath = iconPath + "03_3.png";
 		sequenceButton = new BaseButton(sequenceButtonBaseIconPath,
 				sequenceButtonOverIconPath, sequenceButtonPressedIconPath,
@@ -412,9 +412,9 @@ public class OperatePanel extends JPanel implements Observer {
 
 		// 列表循环
 
-		String listRepeatButtonBaseIconPath = iconPath + "04_1.png";
-		String listRepeatButtonOverIconPath = iconPath + "04_2.png";
-		String listRepeatButtonPressedIconPath = iconPath + "04_3.png";
+		String listRepeatButtonBaseIconPath = iconPath + "01_4.png";
+		String listRepeatButtonOverIconPath = iconPath + "02_4.png";
+		String listRepeatButtonPressedIconPath = iconPath + "03_4.png";
 		listRepeatButton = new BaseButton(listRepeatButtonBaseIconPath,
 				listRepeatButtonOverIconPath, listRepeatButtonPressedIconPath,
 				baseButtonSize, baseButtonSize);
@@ -436,9 +436,9 @@ public class OperatePanel extends JPanel implements Observer {
 
 		// 随机播放
 
-		String randomButtonBaseIconPath = iconPath + "05_1.png";
-		String randomButtonOverIconPath = iconPath + "05_2.png";
-		String randomButtonPressedIconPath = iconPath + "05_3.png";
+		String randomButtonBaseIconPath = iconPath + "01_5.png";
+		String randomButtonOverIconPath = iconPath + "02_5.png";
+		String randomButtonPressedIconPath = iconPath + "03_5.png";
 		randomButton = new BaseButton(randomButtonBaseIconPath,
 				randomButtonOverIconPath, randomButtonPressedIconPath,
 				baseButtonSize, baseButtonSize);

@@ -97,7 +97,7 @@ public class MediaManage implements Observer {
 			Category mCategory = new Category("默认列表");
 			songlist = new ArrayList<SongInfo>();
 			// 加载默认歌曲
-			String defFilePath = Constants.PATH_MP3 + File.separator
+			String defFilePath = Constants.PATH_AUDIO + File.separator
 					+ "蔡健雅 - Beautiful Love.mp3";
 			File defFile = new File(defFilePath);
 			if (defFile.exists()) {

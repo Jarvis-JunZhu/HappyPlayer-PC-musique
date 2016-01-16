@@ -24,13 +24,13 @@ public class FontsUtil {
 
 			// 推荐用这种，原因请详细看http://www.cnblogs.com/zcy_soft/p/3503656.html
 			font = Font.createFont(Font.TRUETYPE_FONT, new File(filePath));
-			font = font.deriveFont(Font.CENTER_BASELINE, fontSize);
+			font = font.deriveFont(Font.PLAIN, fontSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (font == null) {
-			font = new Font("宋体", Font.CENTER_BASELINE, fontSize);
+			font = getBaseFont(fontSize);
 		}
 
 		return font;
@@ -43,6 +43,6 @@ public class FontsUtil {
 	 * @return
 	 */
 	public static Font getBaseFont(int fontSize) {
-		return new Font("宋体", Font.CENTER_BASELINE, fontSize);
+		return new Font("微软雅黑", Font.PLAIN, fontSize);
 	}
 }

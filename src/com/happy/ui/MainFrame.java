@@ -103,7 +103,7 @@ public class MainFrame extends JFrame implements Observer {
 		this.getContentPane().setLayout(null);
 
 		// 主面板
-		Constants.mainPanelWidth = Constants.mainFrameWidth / 5 * 2;
+		Constants.mainPanelWidth = Constants.mainFrameWidth / 5 * 2 - 50;
 		Constants.mainPanelHeight = Constants.mainFrameHeight;
 		MainPanel mainPanel = new MainPanel(desktopLrcDialog);
 		// 添加拖动事件

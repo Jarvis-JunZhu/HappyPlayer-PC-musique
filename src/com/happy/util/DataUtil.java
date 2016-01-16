@@ -66,7 +66,7 @@ public class DataUtil {
 			Dimension screenDimension = Toolkit.getDefaultToolkit()
 					.getScreenSize();
 			// 默认窗口宽度
-			Constants.mainFrameWidth = screenDimension.width / 5 * 3;
+			Constants.mainFrameWidth = screenDimension.width / 5 * 3 + 100;
 			// 默认窗口高度
 			Constants.mainFrameHeight = screenDimension.height / 4 * 3;
 		}
@@ -82,7 +82,7 @@ public class DataUtil {
 	 */
 	public static void initFile() {
 		// 创建相关的文件夹
-		File file = new File(Constants.PATH_MP3);
+		File file = new File(Constants.PATH_AUDIO);
 		if (!file.exists()) {
 			file.mkdirs();
 		}
