@@ -240,7 +240,7 @@ public class MainFrame extends JFrame implements Observer {
 
 		skinDialog.setLocation(x, y);
 		// setEnabled(false);
-		skinDialog.setModal(true);
+		// skinDialog.setModal(true);
 		skinDialog.setVisible(true);
 	}
 

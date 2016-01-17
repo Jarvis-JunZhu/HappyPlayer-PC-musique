@@ -304,8 +304,8 @@ public class ListViewItemComItemPanel extends JPanel {
 					@Override
 					public void run() {
 						int result = JOptionPane.showConfirmDialog(
-								ListViewItemComItemPanel.this, "删除该歌曲?",
-								"确认", JOptionPane.OK_CANCEL_OPTION,
+								ListViewItemComItemPanel.this, "删除该歌曲?", "确认",
+								JOptionPane.OK_CANCEL_OPTION,
 								JOptionPane.INFORMATION_MESSAGE);
 						if (result == JOptionPane.OK_OPTION) {
 							removeSongBySIndex(pindex, sindex);
@@ -436,19 +436,19 @@ public class ListViewItemComItemPanel extends JPanel {
 		songName.setBounds(10, 0, width / 2, height);
 		songSize.setBounds(width - 60 - 20, 0, 60, height);
 
-		String iconPath = Constants.PATH_ICON + File.separator;
-		String delButtonBaseIconPath = iconPath + "del1.png";
-		String delButtonOverIconPath = iconPath + "del2.png";
-		String delButtonPressedIconPath = iconPath + "del2.png";
-		delButton = new BaseButton(delButtonBaseIconPath,
-				delButtonOverIconPath, delButtonPressedIconPath, height / 2,
-				height / 2);
-		delButton.setBounds(songSize.getX() - songSize.getWidth(),
-				(height - defHeight / 2) / 2, defHeight / 2, defHeight / 2);
-
-		initDelButtonEvent();
-
-		this.add(delButton);
+		// String iconPath = Constants.PATH_ICON + File.separator;
+		// String delButtonBaseIconPath = iconPath + "del1.png";
+		// String delButtonOverIconPath = iconPath + "del2.png";
+		// String delButtonPressedIconPath = iconPath + "del2.png";
+		// delButton = new BaseButton(delButtonBaseIconPath,
+		// delButtonOverIconPath, delButtonPressedIconPath, height / 2,
+		// height / 2);
+		// delButton.setBounds(songSize.getX() - songSize.getWidth(),
+		// (height - defHeight / 2) / 2, defHeight / 2, defHeight / 2);
+		//
+		// initDelButtonEvent();
+		//
+		// this.add(delButton);
 		this.add(songName);
 		this.add(songSize);
 		// this.revalidate();
@@ -459,12 +459,21 @@ public class ListViewItemComItemPanel extends JPanel {
 		playListPanel.updateUI();
 	}
 
+	/**
+	 * 单击
+	 * 
+	 * @param isSingleSelect
+	 */
 	public void setSingleSelect(boolean isSingleSelect) {
 		this.isSingleSelect = isSingleSelect;
 		playListPanel.revalidate();
 		playListPanel.repaint();
 	}
 
+	/**
+	 * 
+	 * @param isDoubSelect
+	 */
 	public void setDoubSelect(boolean isDoubSelect) {
 		this.isDoubSelect = isDoubSelect;
 		if (isDoubSelect) {

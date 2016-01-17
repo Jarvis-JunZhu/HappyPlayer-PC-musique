@@ -1,11 +1,9 @@
 package com.happy.widget.panel;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.happy.common.Constants;

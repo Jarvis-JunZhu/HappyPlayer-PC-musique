@@ -16,6 +16,7 @@ import com.happy.model.EventIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
+import com.happy.service.MediaPlayerService;
 import com.happy.util.DataUtil;
 import com.happy.util.MediaUtils;
 
@@ -241,6 +242,9 @@ public class MediaManage implements Observer {
 		this.songInfo = mSongInfo;
 
 		if (isInit) {
+
+			// 关闭当前的播放器
+			MediaPlayerService.getMediaPlayerService().close();
 
 			songInfo.setPlayProgress(0);
 			SongMessage msg = new SongMessage();

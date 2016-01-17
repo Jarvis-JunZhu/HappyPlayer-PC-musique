@@ -854,8 +854,8 @@ public class OperatePanel extends JPanel implements Observer {
 				}
 
 				songNameLabel.setText(mSongInfo.getDisplayName());
-				songSlider.setMaximum((int) mSongInfo.getDuration());
 				songSlider.setValue(0);
+				songSlider.setMaximum((int) mSongInfo.getDuration());
 				songProgressLabel.setText(MediaUtils.formatTime(0));
 				songSizeLabel.setText(MediaUtils.formatTime((int) mSongInfo
 						.getDuration()));
