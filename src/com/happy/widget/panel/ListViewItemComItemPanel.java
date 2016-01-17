@@ -48,7 +48,7 @@ public class ListViewItemComItemPanel extends JPanel {
 	/**
 	 * 默认高度
 	 */
-	private int defHeight = 50;
+	private int defHeight = 40;
 	/**
 	 * 点击高度
 	 */
@@ -110,6 +110,14 @@ public class ListViewItemComItemPanel extends JPanel {
 	 * 
 	 */
 	private JPanel listViewPanel;
+	/**
+	 * 面板鼠标事件
+	 */
+	private PanelMouseListener panelMouseListener = new PanelMouseListener();
+	/**
+	 * 是否进入控件
+	 */
+	private boolean isEnterComponent = false;
 
 	public ListViewItemComItemPanel(JPanel mplayListPanel,
 			JPanel mlistViewPanel, int mpindex, int msindex,
@@ -120,118 +128,20 @@ public class ListViewItemComItemPanel extends JPanel {
 		this.listViewPanel = mlistViewPanel;
 		this.width = mWidth;
 		this.songInfo = msongInfo;
-
-		this.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-
-				if (e.getClickCount() == 1) {
-
-					// 如果当前歌曲正在播放，则对其它进行暂停操作
-					if (Constants.sDoubleClickIndex == sindex
-							&& Constants.pDoubleClickIndex == pindex) {
-						if (songInfo.getSid().equals(Constants.playInfoID)) {
-
-							if (MediaManage.getMediaManage().getPlayStatus() == MediaManage.PLAYING) {
-								// 当前正在播放，发送暂停
-								SongMessage msg = new SongMessage();
-								msg.setSongInfo(songInfo);
-								msg.setType(SongMessage.PAUSEMUSIC);
-								ObserverManage.getObserver().setMessage(msg);
-							} else {
-
-								SongMessage songMessage = new SongMessage();
-								songMessage.setType(SongMessage.PLAYMUSIC);
-								// 通知
-								ObserverManage.getObserver().setMessage(
-										songMessage);
-							}
-						}
-					}
-					EventIntent eventIntent = new EventIntent();
-					eventIntent.setType(EventIntent.SONGLIST);
-					eventIntent.setpIndex(pindex);
-					eventIntent.setsIndex(sindex);
-					eventIntent.setClickCount(EventIntent.SINGLECLICK);
-
-					ObserverManage.getObserver().setMessage(eventIntent);
-
-				}
-
-				if (e.getClickCount() == 2) {
-					// 如果当前歌曲正在播放，则对其它进行暂停操作
-					if (Constants.sDoubleClickIndex == sindex
-							&& Constants.pDoubleClickIndex == pindex) {
-
-						// 双击，播放歌曲
-						if (songInfo.getSid().equals(Constants.playInfoID)) {
-
-							return;
-						}
-					} else {
-
-						EventIntent eventIntent = new EventIntent();
-						eventIntent.setType(EventIntent.SONGLIST);
-						eventIntent.setpIndex(pindex);
-						eventIntent.setsIndex(sindex);
-						eventIntent.setClickCount(EventIntent.DOUBLECLICK);
-
-						ObserverManage.getObserver().setMessage(eventIntent);
-					}
-
-					Constants.playInfoID = songInfo.getSid();
-
-					if (MediaManage.getMediaManage().getPindex() != pindex) {
-
-						// 设置播放时的索引
-						MediaManage.getMediaManage().setPindex(pindex);
-						// 更新歌曲列表
-						MediaManage.getMediaManage().upDateSongListData(pindex);
-					}
-					MediaManage.getMediaManage().setSindex(sindex);
-
-					// 发送播放
-					SongMessage msg = new SongMessage();
-					msg.setSongInfo(songInfo);
-					msg.setType(SongMessage.PLAYINFOMUSIC);
-					ObserverManage.getObserver().setMessage(msg);
-				}
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				isEnter = false;
-				playListPanel.revalidate();
-				playListPanel.repaint();
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				isEnter = true;
-				playListPanel.revalidate();
-				playListPanel.repaint();
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
+		this.addMouseListener(panelMouseListener);
 		initComponent();
 		this.setOpaque(false);
 	}
 
+	/**
+	 * 初始化控件
+	 */
 	public void initComponent() {
 		this.setLayout(null);
 
 		if (songInfo.getSid().equals(Constants.playInfoID)) {
 			isDoubSelect = true;
-			initSelectedComponent();
+			initDoubSelectedComponent();
 		} else {
 			isDoubSelect = false;
 			initDefComponent();
@@ -239,15 +149,46 @@ public class ListViewItemComItemPanel extends JPanel {
 	}
 
 	/**
-	 * 初始化选中布局
+	 * 初始化默认布局
 	 */
-	public void initSelectedComponent() {
+	private void initDefComponent() {
 		this.removeAll();
-		if (isDoubSelect) {
-			height = selectHeight;
-		} else {
-			height = defHeight;
-		}
+		height = defHeight;
+		this.setPreferredSize(new Dimension(width, height));
+		this.setMaximumSize(new Dimension(width, height));
+		this.setMinimumSize(new Dimension(width, height));
+		songName = new JLabel(songInfo.getDisplayName());
+		songSize = new JLabel(songInfo.getDurationStr());
+
+		songName.setBounds(10, 0, width / 2, height);
+		songSize.setBounds(width - 60 - 20, 0, 60, height);
+
+		String iconPath = Constants.PATH_ICON + File.separator;
+		String delButtonBaseIconPath = iconPath + "del1.png";
+		String delButtonOverIconPath = iconPath + "del2.png";
+		String delButtonPressedIconPath = iconPath + "del2.png";
+		delButton = new BaseButton(delButtonBaseIconPath,
+				delButtonOverIconPath, delButtonPressedIconPath, defHeight / 2,
+				defHeight / 2);
+		delButton.setBounds(songSize.getX() - songSize.getWidth(),
+				(defHeight - defHeight / 2) / 2, defHeight / 2, defHeight / 2);
+		delButton.setVisible(false);
+
+		initDelButtonEvent();
+		this.add(delButton);
+
+		this.add(songName);
+		this.add(songSize);
+
+		playListPanel.updateUI();
+	}
+
+	/**
+	 * 初始化双击布局
+	 */
+	private void initDoubSelectedComponent() {
+		this.removeAll();
+		height = selectHeight;
 		this.setPreferredSize(new Dimension(width, height));
 		this.setMaximumSize(new Dimension(width, height));
 		this.setMinimumSize(new Dimension(width, height));
@@ -274,11 +215,14 @@ public class ListViewItemComItemPanel extends JPanel {
 		String delButtonBaseIconPath = iconPath + "del1.png";
 		String delButtonOverIconPath = iconPath + "del2.png";
 		String delButtonPressedIconPath = iconPath + "del2.png";
+
 		delButton = new BaseButton(delButtonBaseIconPath,
 				delButtonOverIconPath, delButtonPressedIconPath, defHeight / 2,
 				defHeight / 2);
-		delButton.setBounds(songSize.getX() - songSize.getWidth(), height
-				- defHeight / 2, defHeight / 2, defHeight / 2);
+		delButton
+				.setBounds(songSize.getX() - songSize.getWidth(), height / 2
+						+ (defHeight - defHeight / 2) / 2, defHeight / 2,
+						defHeight / 2);
 
 		initDelButtonEvent();
 		this.add(delButton);
@@ -286,11 +230,52 @@ public class ListViewItemComItemPanel extends JPanel {
 		this.add(songName);
 		this.add(songSize);
 
-		// this.revalidate();
-		// this.repaint();
-		// playListPanel.revalidate();
-		// playListPanel.repaint();
 		playListPanel.updateUI();
+	}
+
+	/**
+	 * 单击
+	 * 
+	 * @param isSingleSelect
+	 */
+	public void setSingleSelect(boolean isSingleSelect) {
+		this.isSingleSelect = isSingleSelect;
+		playListPanel.revalidate();
+		playListPanel.repaint();
+	}
+
+	/**
+	 * 
+	 * @param isDoubSelect
+	 */
+	public void setDoubSelect(boolean isDoubSelect) {
+		this.isDoubSelect = isDoubSelect;
+		if (isDoubSelect) {
+			isSingleSelect = false;
+			initDoubSelectedComponent();
+		} else {
+			isEnter = false;
+			isSingleSelect = false;
+			initDefComponent();
+		}
+	}
+
+	// 绘制组件
+	public void paintComponent(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		// 消除线条锯齿
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		if (isDoubSelect) {
+			g2d.setPaint(new Color(0, 0, 0, 80));
+		} else if (isSingleSelect) {
+			g2d.setPaint(new Color(0, 0, 0, 50));
+		} else if (isEnter) {
+			g2d.setPaint(new Color(0, 0, 0, 20));
+		} else {
+			g2d.setPaint(new Color(0, 0, 0, 0));
+		}
+		g2d.fillRect(0, 0, width, height);
 	}
 
 	/**
@@ -315,41 +300,36 @@ public class ListViewItemComItemPanel extends JPanel {
 			}
 		});
 
-		//
+		// 删除按钮鼠标事件
 		delButton.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// playListPanel.revalidate();
-				playListPanel.repaint();
-				// playListPanel.updateUI();
+				panelMouseListener.mouseReleased(e);
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// playListPanel.revalidate();
-				playListPanel.repaint();
+				panelMouseListener.mousePressed(e);
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// playListPanel.revalidate();
-				playListPanel.repaint();
+				panelMouseListener.mouseExited(e);
+				isEnterComponent = false;
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// playListPanel.revalidate();
-				playListPanel.repaint();
+				isEnterComponent = true;
+				panelMouseListener.mouseEntered(e);
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// playListPanel.revalidate();
-				// playListPanel.repaint();
+				panelMouseListener.mouseClicked(e);
 			}
 		});
-
 	}
 
 	/**
@@ -417,90 +397,141 @@ public class ListViewItemComItemPanel extends JPanel {
 	}
 
 	/**
-	 * 初始化默认布局
-	 */
-	public void initDefComponent() {
-		this.removeAll();
-		if (isDoubSelect) {
-			height = selectHeight;
-		} else {
-			height = defHeight;
-		}
-		this.setPreferredSize(new Dimension(width, height));
-		this.setMaximumSize(new Dimension(width, height));
-		this.setMinimumSize(new Dimension(width, height));
-
-		songName = new JLabel(songInfo.getDisplayName());
-		songSize = new JLabel(songInfo.getDurationStr());
-
-		songName.setBounds(10, 0, width / 2, height);
-		songSize.setBounds(width - 60 - 20, 0, 60, height);
-
-		// String iconPath = Constants.PATH_ICON + File.separator;
-		// String delButtonBaseIconPath = iconPath + "del1.png";
-		// String delButtonOverIconPath = iconPath + "del2.png";
-		// String delButtonPressedIconPath = iconPath + "del2.png";
-		// delButton = new BaseButton(delButtonBaseIconPath,
-		// delButtonOverIconPath, delButtonPressedIconPath, height / 2,
-		// height / 2);
-		// delButton.setBounds(songSize.getX() - songSize.getWidth(),
-		// (height - defHeight / 2) / 2, defHeight / 2, defHeight / 2);
-		//
-		// initDelButtonEvent();
-		//
-		// this.add(delButton);
-		this.add(songName);
-		this.add(songSize);
-		// this.revalidate();
-		// this.repaint();
-		// playListPanel.revalidate();
-		// playListPanel.repaint();
-		// this.updateUI();
-		playListPanel.updateUI();
-	}
-
-	/**
-	 * 单击
+	 * 面板鼠标事件
 	 * 
-	 * @param isSingleSelect
-	 */
-	public void setSingleSelect(boolean isSingleSelect) {
-		this.isSingleSelect = isSingleSelect;
-		playListPanel.revalidate();
-		playListPanel.repaint();
-	}
-
-	/**
+	 * @author zhangliangming
 	 * 
-	 * @param isDoubSelect
 	 */
-	public void setDoubSelect(boolean isDoubSelect) {
-		this.isDoubSelect = isDoubSelect;
-		if (isDoubSelect) {
-			isSingleSelect = false;
-			initSelectedComponent();
-		} else {
-			isSingleSelect = false;
-			initDefComponent();
+	class PanelMouseListener implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (isEnterComponent) {
+				playListPanel.repaint();
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (isEnterComponent) {
+				playListPanel.repaint();
+				return;
+			}
+
+			if (e.getClickCount() == 1) {
+
+				// 如果当前歌曲正在播放，则对其它进行暂停操作
+				if (Constants.sDoubleClickIndex == sindex
+						&& Constants.pDoubleClickIndex == pindex) {
+					if (songInfo.getSid().equals(Constants.playInfoID)) {
+
+						if (MediaManage.getMediaManage().getPlayStatus() == MediaManage.PLAYING) {
+							// 当前正在播放，发送暂停
+							SongMessage msg = new SongMessage();
+							msg.setSongInfo(songInfo);
+							msg.setType(SongMessage.PAUSEMUSIC);
+							ObserverManage.getObserver().setMessage(msg);
+						} else {
+
+							SongMessage songMessage = new SongMessage();
+							songMessage.setType(SongMessage.PLAYMUSIC);
+							// 通知
+							ObserverManage.getObserver()
+									.setMessage(songMessage);
+						}
+					}
+				}
+				EventIntent eventIntent = new EventIntent();
+				eventIntent.setType(EventIntent.SONGLIST);
+				eventIntent.setpIndex(pindex);
+				eventIntent.setsIndex(sindex);
+				eventIntent.setClickCount(EventIntent.SINGLECLICK);
+
+				ObserverManage.getObserver().setMessage(eventIntent);
+
+			}
+
+			if (e.getClickCount() == 2) {
+				// 如果当前歌曲正在播放，则对其它进行暂停操作
+				if (Constants.sDoubleClickIndex == sindex
+						&& Constants.pDoubleClickIndex == pindex) {
+
+					// 双击，播放歌曲
+					if (songInfo.getSid().equals(Constants.playInfoID)) {
+
+						return;
+					}
+				} else {
+
+					EventIntent eventIntent = new EventIntent();
+					eventIntent.setType(EventIntent.SONGLIST);
+					eventIntent.setpIndex(pindex);
+					eventIntent.setsIndex(sindex);
+					eventIntent.setClickCount(EventIntent.DOUBLECLICK);
+
+					ObserverManage.getObserver().setMessage(eventIntent);
+				}
+
+				Constants.playInfoID = songInfo.getSid();
+
+				if (MediaManage.getMediaManage().getPindex() != pindex) {
+
+					// 设置播放时的索引
+					MediaManage.getMediaManage().setPindex(pindex);
+					// 更新歌曲列表
+					MediaManage.getMediaManage().upDateSongListData(pindex);
+				}
+				MediaManage.getMediaManage().setSindex(sindex);
+
+				// 发送播放
+				SongMessage msg = new SongMessage();
+				msg.setSongInfo(songInfo);
+				msg.setType(SongMessage.PLAYINFOMUSIC);
+				ObserverManage.getObserver().setMessage(msg);
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (isEnterComponent) {
+				playListPanel.repaint();
+			}
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			isEnter = true;
+			if (isEnterComponent) {
+				playListPanel.repaint();
+
+				delButton.setVisible(true);
+				playListPanel.repaint();
+
+			} else {
+				if (isDoubSelect) {
+					initDoubSelectedComponent();
+				} else {
+					delButton.setVisible(true);
+					playListPanel.repaint();
+				}
+			}
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			if (isEnterComponent) {
+				isEnter = false;
+				playListPanel.repaint();
+				delButton.setVisible(false);
+			} else {
+				if (isDoubSelect) {
+					initDoubSelectedComponent();
+				} else {
+					isEnter = false;
+					delButton.setVisible(false);
+					playListPanel.repaint();
+				}
+			}
 		}
 	}
-
-	// 绘制组件
-	public void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-		// 消除线条锯齿
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		if (isDoubSelect) {
-			g2d.setPaint(new Color(0, 0, 0, 80));
-		} else if (isSingleSelect) {
-			g2d.setPaint(new Color(0, 0, 0, 50));
-		} else if (isEnter) {
-			g2d.setPaint(new Color(0, 0, 0, 20));
-		} else {
-			g2d.setPaint(new Color(0, 0, 0, 0));
-		}
-		g2d.fillRect(0, 0, width, height);
-	}
-
 }
