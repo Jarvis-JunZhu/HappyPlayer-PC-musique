@@ -1,6 +1,5 @@
 package com.happy.widget.dialog;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -32,10 +31,12 @@ import com.happy.widget.panel.ScrollBarUI;
 import com.happy.widget.panel.SkinListPanel;
 import com.happy.widget.panel.TitleBackGroundPanel;
 import com.happy.widget.slider.TranSlider;
+
 /**
  * 皮肤窗口
+ * 
  * @author Administrator
- *
+ * 
  */
 public class SkinDialog extends JDialog implements Observer {
 
@@ -66,6 +67,11 @@ public class SkinDialog extends JDialog implements Observer {
 	private SkinEvent skinEvent;
 
 	private JScrollPane scrollPane;
+
+	/**
+	 * 判断其是否是正在拖动
+	 */
+	private boolean isStartTrackingTouch = false;
 
 	public SkinDialog() {
 
@@ -111,6 +117,12 @@ public class SkinDialog extends JDialog implements Observer {
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
+
+				//关闭皮肤窗口，给送消息给相关的窗口
+				MessageIntent messageIntent = new MessageIntent();
+				messageIntent.setAction(MessageIntent.CLOSE_SKINDIALOG);
+				ObserverManage.getObserver().setMessage(messageIntent);
+
 				if (skinEvent != null) {
 					skinEvent.close();
 				}
@@ -133,11 +145,17 @@ public class SkinDialog extends JDialog implements Observer {
 		JPanel buttomPanel = new JPanel();
 		buttomPanel.setBounds(0, height - titleHeight, width, titleHeight);
 
-		JLabel textJLabel = new JLabel(" 列表透明度: ");
+		int buttomWidth = buttomPanel.getWidth();
+		int buttomHeight = buttomPanel.getHeight();
+
+		JLabel textJLabel = new JLabel("列表透明度:");
 		textJLabel.setForeground(Color.black);
+		textJLabel.setBounds(5, 0, 80, buttomHeight);
 
 		final JLabel stextJLabel = new JLabel("");
 		stextJLabel.setForeground(Color.black);
+
+		stextJLabel.setBounds(buttomWidth - 40 - 5, 0, 40, buttomHeight);
 
 		final TranSlider tranSlider = new TranSlider();
 		tranSlider.setOpaque(false); // slider的背景透明
@@ -146,12 +164,17 @@ public class SkinDialog extends JDialog implements Observer {
 		tranSlider.setMinimum(0);
 		tranSlider.setValue(Constants.listViewAlpha);
 
+		tranSlider.setBounds(textJLabel.getX() + textJLabel.getWidth(), 5,
+				buttomWidth - textJLabel.getWidth() - stextJLabel.getWidth()
+						- 10, buttomHeight);
+
 		String tip = 100 - (int) (Constants.listViewAlpha * 1.00 / 255 * 100)
 				+ "%";
 		stextJLabel.setText(" " + tip + " ");
 
 		tranSlider.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
+				isStartTrackingTouch = true;
 			}
 
 			@Override
@@ -164,7 +187,22 @@ public class SkinDialog extends JDialog implements Observer {
 				// // /* 获取鼠标的位置 */
 				tranSlider.setValue(tranSlider.getMaximum() * e.getX()
 						/ tranSlider.getWidth());
+				new Thread() {
 
+					@Override
+					public void run() {
+
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+
+						isStartTrackingTouch = false;
+
+					}
+
+				}.start();
 			}
 
 			@Override
@@ -190,24 +228,28 @@ public class SkinDialog extends JDialog implements Observer {
 
 		tranSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				String tip = 100
-						- (int) (((JSlider) e.getSource()).getValue() * 1.00 / 255 * 100)
-						+ "%";
-				stextJLabel.setText(" " + tip + " ");
+				if (isStartTrackingTouch) {
+					String tip = 100
+							- (int) (((JSlider) e.getSource()).getValue() * 1.00 / 255 * 100)
+							+ "%";
+					stextJLabel.setText(" " + tip + " ");
 
-				Constants.listViewAlpha = ((JSlider) e.getSource()).getValue();
+					Constants.listViewAlpha = ((JSlider) e.getSource())
+							.getValue();
 
-				MessageIntent messageIntent = new MessageIntent();
-				messageIntent.setAction(MessageIntent.UPDATE_LISTVIEW_ALPHA);
-				ObserverManage.getObserver().setMessage(messageIntent);
+					MessageIntent messageIntent = new MessageIntent();
+					messageIntent
+							.setAction(MessageIntent.UPDATE_LISTVIEW_ALPHA);
+					ObserverManage.getObserver().setMessage(messageIntent);
 
+				}
 			}
 		});
 
-		buttomPanel.setLayout(new BorderLayout());
-		buttomPanel.add(textJLabel, BorderLayout.WEST);
-		buttomPanel.add(tranSlider, BorderLayout.CENTER);
-		buttomPanel.add(stextJLabel, BorderLayout.EAST);
+		buttomPanel.setLayout(null);
+		buttomPanel.add(textJLabel);
+		buttomPanel.add(tranSlider);
+		buttomPanel.add(stextJLabel);
 
 		this.getContentPane().add(titlePanel);
 		this.getContentPane().add(buttomPanel);

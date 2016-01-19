@@ -105,7 +105,7 @@ public class MainFrame extends JFrame implements Observer {
 		// 主面板
 		Constants.mainPanelWidth = Constants.mainFrameWidth / 5 * 2 - 50;
 		Constants.mainPanelHeight = Constants.mainFrameHeight;
-		MainPanel mainPanel = new MainPanel(desktopLrcDialog);
+		MainPanel mainPanel = new MainPanel(this, desktopLrcDialog);
 		// 添加拖动事件
 		new PanelMoveFrame(mainPanel, this);
 		mainPanel.setBounds(0, 0, Constants.mainPanelWidth,
@@ -239,8 +239,7 @@ public class MainFrame extends JFrame implements Observer {
 		int y = this.getY() + (this.getHeight() - skinDialog.getMHeight()) / 2;
 
 		skinDialog.setLocation(x, y);
-		// setEnabled(false);
-		// skinDialog.setModal(true);
+		skinDialog.setModal(true);
 		skinDialog.setVisible(true);
 	}
 

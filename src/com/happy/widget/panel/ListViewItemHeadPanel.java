@@ -48,7 +48,7 @@ public class ListViewItemHeadPanel extends JPanel {
 	/**
 	 * 高度
 	 */
-	private int height = 60;
+	private int height = 40;
 
 	/**
 	 * 宽度
@@ -244,7 +244,7 @@ public class ListViewItemHeadPanel extends JPanel {
 		// titleNameJLabel.setForeground(new Color(71, 72, 73));
 		titleNameJLabel.setBounds(
 				statusLeftJLabel.getX() + statusLeftJLabel.getWidth() + 10,
-				(height - height / 3) / 2, width / 2, height / 3);
+				(height - height / 2) / 2, width / 2, height / 2);
 
 		/**
 		 * 基本图标路径
@@ -436,9 +436,8 @@ public class ListViewItemHeadPanel extends JPanel {
 							@Override
 							public void run() {
 								int result = JOptionPane.showConfirmDialog(
-										ListViewItemHeadPanel.this,
-										"删除该播放列表?", "确认",
-										JOptionPane.OK_CANCEL_OPTION,
+										ListViewItemHeadPanel.this, "删除该播放列表?",
+										"确认", JOptionPane.OK_CANCEL_OPTION,
 										JOptionPane.INFORMATION_MESSAGE);
 								if (result == JOptionPane.OK_OPTION) {
 									removePlayListByPIndex(pindex);

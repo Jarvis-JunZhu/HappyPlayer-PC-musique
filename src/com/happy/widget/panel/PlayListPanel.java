@@ -2,12 +2,14 @@ package com.happy.widget.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Point;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -15,12 +17,16 @@ import javax.swing.SwingWorker;
 
 import com.happy.common.Constants;
 import com.happy.manage.MediaManage;
+import com.happy.manage.SongInfoTipManage;
 import com.happy.model.Category;
 import com.happy.model.EventIntent;
 import com.happy.model.MessageIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
+import com.happy.ui.MainFrame;
+import com.happy.util.MediaUtils;
+import com.happy.widget.dialog.SongInfoDialog;
 
 /**
  * 播放列表面板
@@ -50,7 +56,10 @@ public class PlayListPanel extends JPanel implements Observer {
 
 	private int width = 0;
 
-	public PlayListPanel(int width) {
+	private MainFrame mainFrame;
+
+	public PlayListPanel(MainFrame mainFrame, int width) {
+		this.mainFrame = mainFrame;
 		this.width = width;
 		initComponent();
 		this.setOpaque(false);
@@ -207,9 +216,57 @@ public class PlayListPanel extends JPanel implements Observer {
 								new Color(255, 255, 255,
 										Constants.listViewAlpha));
 					}
+				} else if (data instanceof SongMessage) {
+					udateListViewItemComItemPanelUI(data);
 				}
 			}
 		});
+	}
+
+	/**
+	 * 更新歌曲列表item的播放进度
+	 * 
+	 * @param data
+	 */
+	protected void udateListViewItemComItemPanelUI(Object data) {
+		// 获取当前歌曲的播放列表索引和歌曲的索引，找到歌曲所在的面板，再进行进度条的修改
+		int pindex = Constants.pDoubleClickIndex;
+		int sindex = Constants.sDoubleClickIndex;
+
+		// 刷新旧的面板
+		if (pindex == -1 || pindex >= listViewPanel.getComponentCount()) {
+			return;
+		}
+		ListViewItemPanel itemPanel = (ListViewItemPanel) listViewPanel
+				.getComponent(pindex);
+
+		ListViewItemComPanel listViewItemComPanel = (ListViewItemComPanel) itemPanel
+				.getComponent(1);
+		if (sindex != -1 && sindex < listViewItemComPanel.getComponentCount()) {
+
+			ListViewItemComItemPanel lstViewItemComItemPanel = (ListViewItemComItemPanel) listViewItemComPanel
+					.getComponent(sindex);
+
+			if (lstViewItemComItemPanel.getSongProgress() != null) {
+				SongMessage songMessage = (SongMessage) data;
+				if (songMessage.getType() == SongMessage.INITMUSIC
+						|| songMessage.getType() == SongMessage.SERVICEPLAYINGMUSIC
+						|| songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
+						|| songMessage.getType() == SongMessage.ERRORMUSIC
+						|| songMessage.getType() == SongMessage.SERVICEERRORMUSIC) {
+					SongInfo mSongInfo = songMessage.getSongInfo();
+					if (mSongInfo != null) {
+						lstViewItemComItemPanel.getSongProgress().setText(
+								MediaUtils.formatTime((int) mSongInfo
+										.getPlayProgress())
+										+ "/"
+										+ mSongInfo.getDurationStr());
+						repaint();
+					}
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -218,13 +275,65 @@ public class PlayListPanel extends JPanel implements Observer {
 	 * @param eventIntent
 	 */
 	private void refreshListViewItemComItemPanelUI(EventIntent eventIntent) {
-		if (eventIntent.getClickCount() == EventIntent.SINGLECLICK) {
+		if (eventIntent.getEventType() == EventIntent.SINGLECLICK) {
 			// 单击
 			refreshListViewItemComItemSingleClickPanelUI(eventIntent);
-		} else {
+		} else if (eventIntent.getEventType() == EventIntent.DOUBLECLICK) {
 			// 双击
 			refreshListViewItemComItemDoubleClickPanelUI(eventIntent);
+		} else if (eventIntent.getEventType() == EventIntent.ENTERED) {
+			// 鼠标进入
+			showSongInfoTipDialog(eventIntent);
+		} else if (eventIntent.getEventType() == EventIntent.EXITED) {
+			// 鼠标退出
+			hideSongInfoTipDialog();
 		}
+	}
+
+	/**
+	 * 隐藏歌曲信息窗口
+	 */
+	private void hideSongInfoTipDialog() {
+		SongInfoTipManage.hideSongInfoTipDialog();
+	}
+
+	/**
+	 * 显示歌曲信息窗口
+	 * 
+	 * @param eventIntent
+	 */
+	private void showSongInfoTipDialog(EventIntent eventIntent) {
+		int pIndex = eventIntent.getpIndex();
+		if (pIndex == -1 || pIndex >= listViewPanel.getComponentCount()) {
+			return;
+		}
+		ListViewItemPanel itemPanel = (ListViewItemPanel) listViewPanel
+				.getComponent(pIndex);
+
+		ListViewItemComPanel listViewItemComPanel = (ListViewItemComPanel) itemPanel
+				.getComponent(1);
+		int sIndex = eventIntent.getsIndex();
+		if (sIndex != -1 && sIndex < listViewItemComPanel.getComponentCount()) {
+
+			ListViewItemComItemPanel listViewItemComItemPanel = (ListViewItemComItemPanel) listViewItemComPanel
+					.getComponent(sIndex);
+
+			SongInfo songInfo = listViewItemComItemPanel.getSongInfo();
+			SongInfoDialog songInfoDialog = SongInfoTipManage
+					.getSongInfoTipManage(55 * 5, 25 * 3).getSongInfoDialog();
+			songInfoDialog.updateUI(songInfo);
+
+			// 当前控件的位置
+			Point componentPoint = listViewItemComItemPanel
+					.getLocationOnScreen();
+			int componentY = componentPoint.y;
+
+			songInfoDialog.setLocation(mainFrame.getX() + width + 20,
+					componentY);
+			SongInfoTipManage.showSongInfoTipDialog();
+
+		}
+
 	}
 
 	/**

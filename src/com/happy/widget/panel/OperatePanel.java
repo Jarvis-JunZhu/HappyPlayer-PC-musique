@@ -175,9 +175,9 @@ public class OperatePanel extends JPanel implements Observer {
 		songSlider.setValue(0);
 		songSlider.setMaximum(0);
 
-		songSlider.setBounds(leftPadding,
-				songNameLabel.getY() + songNameLabel.getHeight() + topPadding
-						- 10, operatePanelWidth - leftPadding * 2, bH + 10);
+		songSlider.setBounds(leftPadding - 6, songNameLabel.getY()
+				+ songNameLabel.getHeight() + topPadding - 10,
+				operatePanelWidth - (leftPadding - 5) * 2, bH + 10);
 
 		songSlider.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -257,7 +257,7 @@ public class OperatePanel extends JPanel implements Observer {
 
 		songSizeLabel = new JLabel();
 		songSizeLabel.setForeground(Color.white);
-		songSizeLabel.setBounds(operatePanelWidth - 60 - leftPadding / 2,
+		songSizeLabel.setBounds(operatePanelWidth - 60 + leftPadding / 2,
 				songSlider.getY() + songSlider.getHeight() + topPadding - 10,
 				60, bH + 5);
 		songSizeLabel.setText(MediaUtils.formatTime(0));
@@ -575,10 +575,10 @@ public class OperatePanel extends JPanel implements Observer {
 					Constants.volumeSize = 50;
 				}
 				volumeSlider.setValue(Constants.volumeSize);
-				initVolumeButtonUI(volumeButton.getWidth() / 2);
+				initVolumeButtonUI(volumeButton.getWidth() / 3 * 2);
 			}
 		});
-		initVolumeButtonUI(baseButtonSize / 2);
+		initVolumeButtonUI(baseButtonSize / 3 * 2);
 
 		//
 		volumeSlider = new BaseSlider();
@@ -592,7 +592,7 @@ public class OperatePanel extends JPanel implements Observer {
 				+ (buttonPanelHeight - baseButtonSize + 10) / 2;
 
 		volumeSlider.setBounds(vsx, vsy, baseButtonSize + buttonPadding
-				+ buttonPadding / 2, baseButtonSize);
+				+ buttonPadding, baseButtonSize);
 
 		volumeSlider.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -639,7 +639,7 @@ public class OperatePanel extends JPanel implements Observer {
 		volumeSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				Constants.volumeSize = volumeSlider.getValue();
-				initVolumeButtonUI(volumeButton.getWidth() / 2);
+				initVolumeButtonUI(volumeButton.getWidth() / 3 * 2);
 
 				MessageIntent messageIntent = new MessageIntent();
 				messageIntent.setAction(MessageIntent.PLAYERVOLUME);
@@ -682,22 +682,32 @@ public class OperatePanel extends JPanel implements Observer {
 			sound_hotPath = sound_hotPath + "05.png";
 			sound_downPath = sound_downPath + "05.png";
 
+			volumeButton.setToolTipText("音量开");
+
 		} else if (0 < volumeSize && volumeSize <= 25) {
 			sound_normalPath = sound_normalPath + "01.png";
 			sound_hotPath = sound_hotPath + "01.png";
 			sound_downPath = sound_downPath + "01.png";
+
+			volumeButton.setToolTipText("静音");
 		} else if (20 < volumeSize && volumeSize <= 50) {
 			sound_normalPath = sound_normalPath + "02.png";
 			sound_hotPath = sound_hotPath + "02.png";
 			sound_downPath = sound_downPath + "02.png";
+
+			volumeButton.setToolTipText("静音");
 		} else if (50 < volumeSize && volumeSize <= 75) {
 			sound_normalPath = sound_normalPath + "03.png";
 			sound_hotPath = sound_hotPath + "03.png";
 			sound_downPath = sound_downPath + "03.png";
+
+			volumeButton.setToolTipText("静音");
 		} else if (75 < volumeSize && volumeSize <= 100) {
 			sound_normalPath = sound_normalPath + "04.png";
 			sound_hotPath = sound_hotPath + "04.png";
 			sound_downPath = sound_downPath + "04.png";
+
+			volumeButton.setToolTipText("静音");
 		}
 
 		ImageIcon icon = new ImageIcon(iconPath + sound_normalPath);

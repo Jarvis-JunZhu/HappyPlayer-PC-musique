@@ -21,6 +21,11 @@ public class MessageIntent {
 	 */
 	public static final String OPEN_SKINDIALOG = "com.happy.frame.openskindialog";
 	/**
+	 * 关闭皮肤窗口
+	 */
+	public static final String CLOSE_SKINDIALOG = "com.happy.frame.closeskindialog";
+	
+	/**
 	 * 更新列表的透明度
 	 */
 	public static final String UPDATE_LISTVIEW_ALPHA = "com.happy.frame.update.listviewalpha";

@@ -413,7 +413,7 @@ public class MediaManage implements Observer {
 		eventIntent.setType(EventIntent.SONGLIST);
 		eventIntent.setpIndex(pindex);
 		eventIntent.setsIndex(playIndex);
-		eventIntent.setClickCount(EventIntent.DOUBLECLICK);
+		eventIntent.setEventType(EventIntent.DOUBLECLICK);
 
 		ObserverManage.getObserver().setMessage(eventIntent);
 		sindex = playIndex;
@@ -489,7 +489,7 @@ public class MediaManage implements Observer {
 		eventIntent.setType(EventIntent.SONGLIST);
 		eventIntent.setpIndex(pindex);
 		eventIntent.setsIndex(-1);
-		eventIntent.setClickCount(EventIntent.DOUBLECLICK);
+		eventIntent.setEventType(EventIntent.DOUBLECLICK);
 		ObserverManage.getObserver().setMessage(eventIntent);
 
 		// songInfo = null;
@@ -592,7 +592,7 @@ public class MediaManage implements Observer {
 		eventIntent.setType(EventIntent.SONGLIST);
 		eventIntent.setpIndex(pindex);
 		eventIntent.setsIndex(playIndex);
-		eventIntent.setClickCount(EventIntent.DOUBLECLICK);
+		eventIntent.setEventType(EventIntent.DOUBLECLICK);
 
 		ObserverManage.getObserver().setMessage(eventIntent);
 		sindex = playIndex;

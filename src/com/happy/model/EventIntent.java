@@ -24,9 +24,17 @@ public class EventIntent {
 	 */
 	public static final int DOUBLECLICK = 1;
 	/**
-	 * 点击次数
+	 * 进入
 	 */
-	private int clickCount;
+	public static final int ENTERED = 2;
+	/**
+	 * 退出
+	 */
+	public static final int EXITED = 3;
+	/**
+	 * 事件类型
+	 */
+	private int eventType;
 
 	/**
 	 * 播放列表id
@@ -50,12 +58,14 @@ public class EventIntent {
 	 */
 	private int type;
 
-	public int getClickCount() {
-		return clickCount;
+	
+
+	public int getEventType() {
+		return eventType;
 	}
 
-	public void setClickCount(int clickCount) {
-		this.clickCount = clickCount;
+	public void setEventType(int eventType) {
+		this.eventType = eventType;
 	}
 
 	public int getpIndex() {

@@ -26,6 +26,7 @@ import com.happy.model.EventIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
+import com.happy.util.MediaUtils;
 import com.happy.widget.button.BaseButton;
 
 /**
@@ -52,7 +53,7 @@ public class ListViewItemComItemPanel extends JPanel {
 	/**
 	 * 点击高度
 	 */
-	private int selectHeight = 80;
+	private int selectHeight = 60;
 	/**
 	 * 高度
 	 */
@@ -99,6 +100,10 @@ public class ListViewItemComItemPanel extends JPanel {
 	 */
 	private JLabel songSize;
 	/**
+	 * 播放进度
+	 */
+	private JLabel songProgress;
+	/**
 	 * 歌手图片
 	 */
 	private JLabel singerIconLabel;
@@ -131,6 +136,7 @@ public class ListViewItemComItemPanel extends JPanel {
 		this.addMouseListener(panelMouseListener);
 		initComponent();
 		this.setOpaque(false);
+
 	}
 
 	/**
@@ -161,17 +167,19 @@ public class ListViewItemComItemPanel extends JPanel {
 		songSize = new JLabel(songInfo.getDurationStr());
 
 		songName.setBounds(10, 0, width / 2, height);
-		songSize.setBounds(width - 60 - 20, 0, 60, height);
+		songSize.setBounds(width - 60 - 15, 0, 60, height);
 
 		String iconPath = Constants.PATH_ICON + File.separator;
 		String delButtonBaseIconPath = iconPath + "del1.png";
 		String delButtonOverIconPath = iconPath + "del2.png";
-		String delButtonPressedIconPath = iconPath + "del2.png";
+		String delButtonPressedIconPath = iconPath + "del3.png";
 		delButton = new BaseButton(delButtonBaseIconPath,
-				delButtonOverIconPath, delButtonPressedIconPath, defHeight / 2,
-				defHeight / 2);
+				delButtonOverIconPath, delButtonPressedIconPath,
+				defHeight / 2 + 5, defHeight / 2);
 		delButton.setBounds(songSize.getX() - songSize.getWidth(),
-				(defHeight - defHeight / 2) / 2, defHeight / 2, defHeight / 2);
+				(defHeight - defHeight / 2) / 2, defHeight / 2 + 5,
+				defHeight / 2);
+		delButton.setToolTipText("删除");
 		delButton.setVisible(false);
 
 		initDelButtonEvent();
@@ -196,40 +204,56 @@ public class ListViewItemComItemPanel extends JPanel {
 		songName = new JLabel(songInfo.getDisplayName());
 		songSize = new JLabel(songInfo.getDurationStr());
 
+		String progressTime = "00:00";
+		SongInfo tempSongInfo = MediaManage.getMediaManage().getSongInfo();
+		if (tempSongInfo != null) {
+			progressTime = MediaUtils.formatTime((int) tempSongInfo
+					.getPlayProgress());
+		}
+		songProgress = new JLabel(progressTime + "/"
+				+ songInfo.getDurationStr());
+
 		String singerIconPath = Constants.PATH_ICON + File.separator
 				+ "ic_launcher.png";
 		ImageIcon singerIcon = new ImageIcon(singerIconPath);
 		singerIcon.setImage(singerIcon.getImage().getScaledInstance(
-				height * 2 / 3, height * 2 / 3, Image.SCALE_SMOOTH));
+				height * 3 / 4, height * 3 / 4, Image.SCALE_SMOOTH));
 		singerIconLabel = new JLabel(singerIcon);
 
-		singerIconLabel.setBounds(10, (height - height * 2 / 3) / 2,
-				height * 2 / 3, height * 2 / 3);
+		singerIconLabel.setBounds(10, (height - height * 3 / 4) / 2,
+				height * 3 / 4, height * 3 / 4);
 
 		songName.setBounds(
-				10 + singerIconLabel.getX() + singerIconLabel.getWidth(), 0,
-				width / 2, height);
-		songSize.setBounds(width - 60 - 20, 0, 60, height);
+				10 + singerIconLabel.getX() + singerIconLabel.getWidth(),
+				singerIconLabel.getHeight() / 4 - 5, width - 10, height / 2);
+
+		songSize.setBounds(width - 60 - 15, 0, 60, height);
+		songSize.setVisible(false);
+
+		songProgress.setBounds(
+				singerIconLabel.getX() + singerIconLabel.getWidth() + 10,
+				songName.getY() + 25, 100, height / 2);
 
 		String iconPath = Constants.PATH_ICON + File.separator;
 		String delButtonBaseIconPath = iconPath + "del1.png";
 		String delButtonOverIconPath = iconPath + "del2.png";
-		String delButtonPressedIconPath = iconPath + "del2.png";
+		String delButtonPressedIconPath = iconPath + "del3.png";
 
 		delButton = new BaseButton(delButtonBaseIconPath,
-				delButtonOverIconPath, delButtonPressedIconPath, defHeight / 2,
+				delButtonOverIconPath, delButtonPressedIconPath,
+				defHeight / 2 + 5, defHeight / 2);
+
+		delButton.setBounds(songSize.getX() - songSize.getWidth(), height / 2
+				+ (defHeight - defHeight / 2) / 2 - 2, defHeight / 2 + 5,
 				defHeight / 2);
-		delButton
-				.setBounds(songSize.getX() - songSize.getWidth(), height / 2
-						+ (defHeight - defHeight / 2) / 2, defHeight / 2,
-						defHeight / 2);
+		delButton.setToolTipText("删除");
 
 		initDelButtonEvent();
 		this.add(delButton);
 		this.add(singerIconLabel);
 		this.add(songName);
 		this.add(songSize);
-
+		this.add(songProgress);
 		playListPanel.updateUI();
 	}
 
@@ -445,7 +469,7 @@ public class ListViewItemComItemPanel extends JPanel {
 				eventIntent.setType(EventIntent.SONGLIST);
 				eventIntent.setpIndex(pindex);
 				eventIntent.setsIndex(sindex);
-				eventIntent.setClickCount(EventIntent.SINGLECLICK);
+				eventIntent.setEventType(EventIntent.SINGLECLICK);
 
 				ObserverManage.getObserver().setMessage(eventIntent);
 
@@ -467,7 +491,7 @@ public class ListViewItemComItemPanel extends JPanel {
 					eventIntent.setType(EventIntent.SONGLIST);
 					eventIntent.setpIndex(pindex);
 					eventIntent.setsIndex(sindex);
-					eventIntent.setClickCount(EventIntent.DOUBLECLICK);
+					eventIntent.setEventType(EventIntent.DOUBLECLICK);
 
 					ObserverManage.getObserver().setMessage(eventIntent);
 				}
@@ -514,6 +538,15 @@ public class ListViewItemComItemPanel extends JPanel {
 					delButton.setVisible(true);
 					playListPanel.repaint();
 				}
+
+				EventIntent eventIntent = new EventIntent();
+				eventIntent.setType(EventIntent.SONGLIST);
+				eventIntent.setpIndex(pindex);
+				eventIntent.setsIndex(sindex);
+				eventIntent.setEventType(EventIntent.ENTERED);
+
+				ObserverManage.getObserver().setMessage(eventIntent);
+
 			}
 		}
 
@@ -531,7 +564,26 @@ public class ListViewItemComItemPanel extends JPanel {
 					delButton.setVisible(false);
 					playListPanel.repaint();
 				}
+
+				EventIntent eventIntent = new EventIntent();
+				eventIntent.setType(EventIntent.SONGLIST);
+				eventIntent.setEventType(EventIntent.EXITED);
+
+				ObserverManage.getObserver().setMessage(eventIntent);
 			}
 		}
+	}
+
+	/**
+	 * 获取进度条控件
+	 * 
+	 * @return
+	 */
+	public JLabel getSongProgress() {
+		return songProgress;
+	}
+
+	public SongInfo getSongInfo() {
+		return songInfo;
 	}
 }
