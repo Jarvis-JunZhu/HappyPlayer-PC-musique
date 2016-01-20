@@ -108,7 +108,7 @@ public class Constants {
 	/**
 	 * 歌曲播放模式
 	 */
-	public static int playModel = 0; // 0是 顺序播放 1是随机播放 2是循环播放 3是单曲播放 4单曲循环
+	public static int playModel = 2; // 0是 顺序播放 1是随机播放 2是循环播放 3是单曲播放 4单曲循环
 	/**
 	 * 歌曲播放模式key
 	 */

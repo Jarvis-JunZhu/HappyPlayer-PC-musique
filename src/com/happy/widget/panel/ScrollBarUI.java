@@ -55,7 +55,7 @@ public class ScrollBarUI extends BasicScrollBarUI {
 
 	private void init() {
 		// 滚动条默认颜色
-		this.thumbColor = new Color(151, 148, 146, alpha);
+		this.thumbColor = new Color(151, 148, 150, alpha);
 		this.thumbDarkShadowColor = new Color(62, 62, 62, alpha);
 		this.thumbLightShadowColor = new Color(240, 240, 240, alpha);
 		this.thumbHighlightColor = new Color(240, 240, 240, alpha);

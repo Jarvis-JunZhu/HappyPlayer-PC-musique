@@ -148,8 +148,9 @@ public class DesLrcDialog extends JDialog implements Observer {
 
 	/**
 	 * 窗口鼠标事件
+	 * 
 	 * @author Administrator
-	 *
+	 * 
 	 */
 	private class DesLrcDialogMouseListener implements MouseInputListener {
 
@@ -173,6 +174,7 @@ public class DesLrcDialog extends JDialog implements Observer {
 			// desOperatePanel.setEnter(false);
 			// }
 			isDragged = false;
+			mouseExited(e);
 		}
 
 		@Override
@@ -213,6 +215,9 @@ public class DesLrcDialog extends JDialog implements Observer {
 					desOperatePanel.setVisible(false);
 					floatLyricsView.setShow(false);
 				}
+			} else {
+				desOperatePanel.setVisible(true);
+				floatLyricsView.setShow(true);
 			}
 		}
 

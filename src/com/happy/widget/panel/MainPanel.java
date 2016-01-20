@@ -19,8 +19,12 @@ public class MainPanel extends JPanel {
 	private static final long serialVersionUID = -3285370418675829685L;
 
 	private DesLrcDialog desLrcDialog;
-	
+
 	private MainFrame mainFrame;
+	/**
+	 * 
+	 */
+	private PlayListPanel playListPanel;
 
 	public MainPanel(MainFrame mainFrame, DesLrcDialog mdesktopLrcDialog) {
 		this.mainFrame = mainFrame;
@@ -45,11 +49,17 @@ public class MainPanel extends JPanel {
 		operatePanel.setBounds(0, 0, operatePanelWidth, operatePanelHeight);
 
 		// 播放列表面板
-		PlayListPanel playListPanel = new PlayListPanel(mainFrame,operatePanelWidth - 20);
+		playListPanel = new PlayListPanel(this,mainFrame, operatePanelWidth - 20);
 		playListPanel.setBounds(10, operatePanelHeight, operatePanelWidth - 20,
 				Constants.mainPanelHeight - operatePanelHeight - 10);
 
 		this.add(operatePanel);
 		this.add(playListPanel);
 	}
+
+	public PlayListPanel getPlayListPanel() {
+		return playListPanel;
+	}
+	
+	
 }

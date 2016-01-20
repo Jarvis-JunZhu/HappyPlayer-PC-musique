@@ -176,7 +176,7 @@ public class ListViewItemComItemPanel extends JPanel {
 		delButton = new BaseButton(delButtonBaseIconPath,
 				delButtonOverIconPath, delButtonPressedIconPath,
 				defHeight / 2 + 5, defHeight / 2);
-		delButton.setBounds(songSize.getX() - songSize.getWidth(),
+		delButton.setBounds(songSize.getX() - (defHeight / 2 + 10),
 				(defHeight - defHeight / 2) / 2, defHeight / 2 + 5,
 				defHeight / 2);
 		delButton.setToolTipText("删除");
@@ -243,7 +243,7 @@ public class ListViewItemComItemPanel extends JPanel {
 				delButtonOverIconPath, delButtonPressedIconPath,
 				defHeight / 2 + 5, defHeight / 2);
 
-		delButton.setBounds(songSize.getX() - songSize.getWidth(), height / 2
+		delButton.setBounds(songSize.getX() - (defHeight / 2 + 10), height / 2
 				+ (defHeight - defHeight / 2) / 2 - 2, defHeight / 2 + 5,
 				defHeight / 2);
 		delButton.setToolTipText("删除");
@@ -526,7 +526,6 @@ public class ListViewItemComItemPanel extends JPanel {
 		public void mouseEntered(MouseEvent e) {
 			isEnter = true;
 			if (isEnterComponent) {
-				playListPanel.repaint();
 
 				delButton.setVisible(true);
 				playListPanel.repaint();
@@ -555,7 +554,9 @@ public class ListViewItemComItemPanel extends JPanel {
 			if (isEnterComponent) {
 				isEnter = false;
 				playListPanel.repaint();
-				delButton.setVisible(false);
+				if (!isDoubSelect) {
+					delButton.setVisible(false);
+				}
 			} else {
 				if (isDoubSelect) {
 					initDoubSelectedComponent();

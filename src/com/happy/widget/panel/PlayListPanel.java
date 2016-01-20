@@ -9,7 +9,6 @@ import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -58,7 +57,10 @@ public class PlayListPanel extends JPanel implements Observer {
 
 	private MainFrame mainFrame;
 
-	public PlayListPanel(MainFrame mainFrame, int width) {
+	private MainPanel mainPanel;
+
+	public PlayListPanel(MainPanel mainPanel, MainFrame mainFrame, int width) {
+		this.mainPanel = mainPanel;
 		this.mainFrame = mainFrame;
 		this.width = width;
 		initComponent();
@@ -74,6 +76,7 @@ public class PlayListPanel extends JPanel implements Observer {
 		jScrollPane.setBorder(null);
 
 		jScrollPane.getVerticalScrollBar().setUI(new ScrollBarUI(100));
+		// jScrollPane.getVerticalScrollBar().setOpaque(false);
 		jScrollPane.getVerticalScrollBar().setUnitIncrement(30);
 		// 不显示水平的滚动条
 		jScrollPane
@@ -323,13 +326,27 @@ public class PlayListPanel extends JPanel implements Observer {
 					.getSongInfoTipManage(55 * 5, 25 * 3).getSongInfoDialog();
 			songInfoDialog.updateUI(songInfo);
 
+			//
+			Point thisPoint = mainPanel.getPlayListPanel()
+					.getLocationOnScreen();
+
 			// 当前控件的位置
 			Point componentPoint = listViewItemComItemPanel
 					.getLocationOnScreen();
 			int componentY = componentPoint.y;
+			int dialogH = songInfoDialog.getHeight();
 
-			songInfoDialog.setLocation(mainFrame.getX() + width + 20,
-					componentY);
+			Point framePoint = mainFrame.getLocationOnScreen();
+			int frameY = framePoint.y;
+			int frameH = mainFrame.getHeight();
+
+			int y = componentY;
+			if (y < thisPoint.y) {
+				y = thisPoint.y;
+			} else if (componentY + dialogH > frameY + frameH) {
+				y = frameY + frameH - dialogH - 5;
+			}
+			songInfoDialog.setLocation(mainFrame.getX() + width + 20, y);
 			SongInfoTipManage.showSongInfoTipDialog();
 
 		}
