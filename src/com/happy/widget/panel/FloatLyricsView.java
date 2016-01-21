@@ -126,8 +126,7 @@ public class FloatLyricsView extends JPanel implements Observer {
 	private MouseInputListener desLrcDialogMouseListener;
 
 	// 统一字体
-	String fontFilePath = Constants.PATH_FONTS + File.separator
-			+ "kaiti.ttf";
+	String fontFilePath = Constants.PATH_FONTS + File.separator + "方正黑体简体.TTF";
 	/**
 	 * 字体
 	 */
@@ -191,9 +190,9 @@ public class FloatLyricsView extends JPanel implements Observer {
 				/ Constants.desktopLrcFontMaxSize;
 
 		INTERVAL = (float) (height - SCALEIZEWORDDEF * 2) / 3;
-		
-		baseFont = FontsUtil
-		.getFontByFile(fontFilePath, (int) SCALEIZEWORDDEF);
+
+		baseFont = FontsUtil.getFontByFile(fontFilePath, Font.BOLD,
+				(int) SCALEIZEWORDDEF);
 	}
 
 	// 绘制组件
@@ -203,18 +202,15 @@ public class FloatLyricsView extends JPanel implements Observer {
 		Graphics2D g2d = (Graphics2D) g;
 		// 以达到边缘平滑的效果
 
-		RenderingHints renderHints = new RenderingHints(
-				RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		renderHints.put(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);
-		g2d.setRenderingHints(renderHints);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		//
 		// g2d.setFont(new Font("宋体", Font.BOLD, (int) SCALEIZEWORDDEF));
 		g2d.setFont(baseFont);
 
 		if (isEnter || isShow) {
-			g2d.setPaint(new Color(0, 0, 0, 100));
+			g2d.setPaint(new Color(0, 0, 0, 150));
 			g2d.fillRect(0, 0, width, height);
 		}
 

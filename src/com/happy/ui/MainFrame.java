@@ -23,6 +23,7 @@ import com.happy.service.MediaPlayerService;
 import com.happy.util.DataUtil;
 import com.happy.widget.dialog.DesLrcDialog;
 import com.happy.widget.dialog.SkinDialog;
+import com.happy.widget.panel.MainLrcOperatePanel;
 import com.happy.widget.panel.MainLrcPanel;
 import com.happy.widget.panel.MainMenuPanel;
 import com.happy.widget.panel.MainPanel;
@@ -132,6 +133,18 @@ public class MainFrame extends JFrame implements Observer {
 				mainMenuPanelWidth - 10, Constants.mainFrameHeight
 						- mainMenuPanelHeight - 10);
 
+		// 歌词操作面板
+		int loWidht = mainLrcPanel.getWidth() / 8 - 10;
+		int loHeight = mainLrcPanel.getHeight() / 2 + 20;
+		int loX = Constants.mainFrameWidth - loWidht;
+		int loY = mainLrcPanel.getY() + (mainLrcPanel.getHeight() - loHeight)
+				/ 2;
+		MainLrcOperatePanel mainLrcOperatePanel = new MainLrcOperatePanel(
+				loWidht, loHeight, loX, loY);
+		mainLrcOperatePanel.setBounds(loX + mainLrcOperatePanel.getSeekX(),
+				loY, loWidht, loHeight);
+
+		this.getContentPane().add(mainLrcOperatePanel);
 		this.getContentPane().add(mainLrcPanel);
 		this.getContentPane().add(mainMenuPanel);
 		this.getContentPane().add(mainPanel);

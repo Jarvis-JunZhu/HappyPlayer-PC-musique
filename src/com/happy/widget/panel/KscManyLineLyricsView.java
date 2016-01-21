@@ -1,5 +1,6 @@
 package com.happy.widget.panel;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -177,10 +178,10 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 	 * 初始化字体大小
 	 */
 	private void initSizeWord() {
-		String tip = Constants.APPTIPTITLE;
-		Constants.lrcFontSize = width / tip.length();
-		Constants.lrcFontMinSize = width / tip.length();
-		Constants.lrcFontMaxSize = width / tip.length() + 20;
+		// String tip = Constants.APPTIPTITLE;
+		// Constants.lrcFontSize = width / tip.length();
+		// Constants.lrcFontMinSize = width / tip.length();
+		// Constants.lrcFontMaxSize = width / tip.length() + 20;
 		fontSizeScale = Constants.lrcFontSize + 100;
 		SCALEIZEWORDDEF = (int) ((float) fontSizeScale / 100 * SIZEWORD);
 		SIZEWORDHL = SCALEIZEWORDDEF + 10;
@@ -193,12 +194,12 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 		Graphics2D g2d = (Graphics2D) g;
 		// 以达到边缘平滑的效果
 
-		RenderingHints renderHints = new RenderingHints(
-				RenderingHints.KEY_ANTIALIASING,
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		renderHints.put(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);
-		g2d.setRenderingHints(renderHints);
+		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+				RenderingHints.VALUE_STROKE_PURE);
+		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+				RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 
 		// 画时间线和时间线
 		if (mIsDrawTimeLine) {
@@ -226,10 +227,10 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 		FontMetrics fm = g2d.getFontMetrics();
 		int textHeight = fm.getHeight();
 		float y = height / 2;
-
 		g2d.setPaint(paintHLED);
-
 		g2d.drawString(timeStr, 0, y + textHeight);
+		g2d.setPaint(Color.WHITE);
+		g2d.setStroke(new BasicStroke(1.5f));
 		g2d.drawLine(0, (int) y, width, (int) y);
 	}
 
@@ -273,7 +274,7 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 		int alphaValue = 5;
 		// 画当前歌词之前的歌词
 		for (int i = lyricsLineNum - 1; i >= 0; i--) {
-			if (offsetY + (SCALEIZEWORDDEF + INTERVAL) * i < (SCALEIZEWORDDEF)) {
+			if (offsetY + (SCALEIZEWORDDEF + INTERVAL) * i < (SCALEIZEWORDDEF + SCALEIZEWORDDEF / 2)) {
 				break;
 			}
 
@@ -310,7 +311,7 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 		// 画当前歌词之后的歌词
 		for (int i = lyricsLineNum + 1; i < lyricsLineTreeMap.size(); i++) {
 			if (offsetY + (SCALEIZEWORDDEF + INTERVAL) * i > height
-					- (SCALEIZEWORDDEF)) {
+					- (SCALEIZEWORDDEF + SCALEIZEWORDDEF / 2)) {
 				break;
 			}
 

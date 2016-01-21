@@ -53,6 +53,9 @@ public class MainLrcPanel extends JPanel implements Observer {
 	 */
 	private JPanel mainPanel;
 
+	/**
+	 * 桌面歌词窗口
+	 */
 	private DesLrcDialog desktopLrcDialog;
 
 	public MainLrcPanel(int width, int height, JPanel mainPanel,

@@ -178,6 +178,11 @@ public class DataUtil {
 			// 音量
 			Constants.volumeSize = Integer.parseInt(baseDataProperties
 					.getProperty(Constants.volumeSize_KEY));
+			
+			// 歌词大小
+			Constants.lrcFontSize = Integer.parseInt(baseDataProperties
+					.getProperty(Constants.lrcFontSize_KEY));
+
 			return true;
 		} catch (Exception e) {
 			logger.error("解析基本数据配置文件出错!!");
@@ -412,6 +417,10 @@ public class DataUtil {
 
 		baseDataProperties.put(Constants.volumeSize_KEY,
 				String.valueOf(Constants.volumeSize));
+		
+		
+		baseDataProperties.put(Constants.lrcFontSize_KEY,
+				String.valueOf(Constants.lrcFontSize));
 
 		try {
 			FileOutputStream out = new FileOutputStream(baseDataFile);

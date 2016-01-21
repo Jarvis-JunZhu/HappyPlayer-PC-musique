@@ -27,7 +27,8 @@ public class Constants {
 	/**
 	 * 歌曲目录
 	 */
-	public final static String PATH_AUDIO = PATH_TEMP + File.separator + "audio";
+	public final static String PATH_AUDIO = PATH_TEMP + File.separator
+			+ "audio";
 
 	/**
 	 * 歌词目录
@@ -189,7 +190,7 @@ public class Constants {
 	/**
 	 * 歌词颜色索引
 	 */
-	public static int lrcColorIndex = 4;
+	public static int lrcColorIndex = 0;
 	/**
 	 * 歌词颜色索引key
 	 */
@@ -208,21 +209,26 @@ public class Constants {
 	 * 歌词颜色集合
 	 */
 	public static Color[] lrcColorStr = { new Color(250, 218, 131),
-			new Color(93, 177, 240), new Color(225, 125, 179),
-			new Color(157, 196, 0), new Color(138, 1, 226) };
+			new Color(138, 1, 226), new Color(225, 125, 179),
+			new Color(157, 196, 0) };
 
 	/**
 	 * 歌词最小大小
 	 */
-	public static int lrcFontMinSize = 0;
+	public static int lrcFontMinSize = 40;
 	/**
 	 * 歌词最大大小
 	 */
-	public static int lrcFontMaxSize = 0;
+	public static int lrcFontMaxSize = 120;
 	/**
 	 * 歌词大小
 	 */
 	public static int lrcFontSize = lrcFontMinSize;
+
+	/**
+	 * 歌词大小KEY
+	 */
+	public static String lrcFontSize_KEY = "lrcFontSize_KEY";
 
 	/**
 	 * 桌面歌词最小大小
@@ -297,6 +303,7 @@ public class Constants {
 
 	/**
 	 * 获取年份
+	 * 
 	 * @return
 	 */
 	public static String getYear() {

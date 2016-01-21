@@ -18,13 +18,14 @@ public class FontsUtil {
 	 *            字体大小
 	 * @return
 	 */
-	public static Font getFontByFile(String filePath, int fontSize) {
+	public static Font getFontByFile(String filePath, int fontStyle,
+			int fontSize) {
 		Font font = null;
 		try {
 
 			// 推荐用这种，原因请详细看http://www.cnblogs.com/zcy_soft/p/3503656.html
 			font = Font.createFont(Font.TRUETYPE_FONT, new File(filePath));
-			font = font.deriveFont(Font.PLAIN, fontSize);
+			font = font.deriveFont(fontStyle, fontSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();
