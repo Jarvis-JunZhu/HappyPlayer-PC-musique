@@ -512,7 +512,6 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 			songMessage.setProgress(progress);
 			ObserverManage.getObserver().setMessage(songMessage);
 
-			blScroll = false;
 			mIsDrawTimeLine = false;
 
 			//
@@ -520,6 +519,21 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 			touchY = tt;
 
 			repaint();
+
+			//延迟刷新歌词，避免歌词出现闪烁
+			new Thread() {
+
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					blScroll = false;
+				}
+
+			}.start();
 		}
 
 		@Override

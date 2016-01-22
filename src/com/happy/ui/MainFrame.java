@@ -135,7 +135,7 @@ public class MainFrame extends JFrame implements Observer {
 
 		// 歌词操作面板
 		int loWidht = mainLrcPanel.getWidth() / 8 - 10;
-		int loHeight = mainLrcPanel.getHeight() / 2 + 20;
+		int loHeight = (loWidht - loWidht / 5 - 8) * 6;
 		int loX = Constants.mainFrameWidth - loWidht;
 		int loY = mainLrcPanel.getY() + (mainLrcPanel.getHeight() - loHeight)
 				/ 2;

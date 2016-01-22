@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
@@ -15,6 +14,7 @@ import com.happy.common.Constants;
 import com.happy.model.MessageIntent;
 import com.happy.observable.ObserverManage;
 import com.happy.widget.button.MainLrcOperateButton;
+import com.happy.widget.label.MainLrcOperateLabel;
 import com.happy.widget.panel.LrcColorParentPanel.LrcEvent;
 
 /**
@@ -157,7 +157,8 @@ public class MainLrcOperatePanel extends JPanel {
 		ImageIcon jbgIcon = new ImageIcon(jbgIconPath);
 		jbgIcon.setImage(jbgIcon.getImage().getScaledInstance(
 				width - hideWidth, height, Image.SCALE_SMOOTH));
-		JLabel jbg = new JLabel(jbgIcon);
+		MainLrcOperateLabel jbg = new MainLrcOperateLabel(jbgIcon,
+				mouseListener, this);
 		jbg.setBounds(hideWidth - 14, 0, width - hideWidth + 22, height);
 
 		int bWidth = width - hideWidth - 10;
