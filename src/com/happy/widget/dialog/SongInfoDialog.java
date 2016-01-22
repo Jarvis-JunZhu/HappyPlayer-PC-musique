@@ -70,7 +70,6 @@ public class SongInfoDialog extends JDialog {
 
 		// 设定禁用窗体装饰，这样就取消了默认的窗体结构
 		this.setUndecorated(true);
-		this.setSize(width, height);
 		this.setAlwaysOnTop(true);
 		this.setSize(width, height);
 		AWTUtilities.setWindowOpacity(this, 0.8f);

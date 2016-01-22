@@ -1,11 +1,13 @@
 package com.happy.widget.panel;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.util.Observable;
@@ -21,6 +23,7 @@ import javax.swing.event.ChangeListener;
 
 import com.happy.common.Constants;
 import com.happy.manage.MediaManage;
+import com.happy.manage.SongProgressTipManage;
 import com.happy.model.MessageIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
@@ -28,6 +31,7 @@ import com.happy.observable.ObserverManage;
 import com.happy.util.MediaUtils;
 import com.happy.widget.button.BaseButton;
 import com.happy.widget.dialog.DesLrcDialog;
+import com.happy.widget.dialog.SongProgressTipDialog;
 import com.happy.widget.slider.BaseSlider;
 
 /**
@@ -220,14 +224,17 @@ public class OperatePanel extends JPanel implements Observer {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
+				SongProgressTipManage.getSongInfoTipManage();
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
+				SongProgressTipManage.hideSongProgressTipDialog();
 			}
 
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
+
 			}
 
 			@Override
@@ -236,6 +243,32 @@ public class OperatePanel extends JPanel implements Observer {
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
+			}
+		});
+
+		songSlider.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				int progress = songSlider.getMaximum() * e.getX()
+						/ songSlider.getWidth();
+				String tip = MediaUtils.formatTime(progress);
+				SongProgressTipDialog songProgressTipDialog = SongProgressTipManage
+						.getSongInfoTipManage().getSongProgressTipDialog();
+				songProgressTipDialog.setSize(new Dimension(tip.length()
+						* Constants.APPFONTSIZE, Constants.APPFONTSIZE + 10));
+				int x = e.getXOnScreen();
+				int y = songSlider.getLocationOnScreen().y
+						+ songSlider.getHeight() + 10;
+
+				songProgressTipDialog.getTipLabel().setText(tip);
+				songProgressTipDialog.setLocation(x, y);
+				SongProgressTipManage.showSongProgressTipDialog();
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+
 			}
 		});
 
