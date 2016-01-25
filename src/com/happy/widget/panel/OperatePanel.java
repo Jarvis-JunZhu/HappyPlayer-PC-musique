@@ -224,7 +224,6 @@ public class OperatePanel extends JPanel implements Observer {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				SongProgressTipManage.getSongInfoTipManage();
 			}
 
 			@Override
@@ -252,16 +251,23 @@ public class OperatePanel extends JPanel implements Observer {
 			public void mouseMoved(MouseEvent e) {
 				int progress = songSlider.getMaximum() * e.getX()
 						/ songSlider.getWidth();
-				String tip = MediaUtils.formatTime(progress);
+
+				String tip = "歌曲进度";
+				if (songSlider.getMaximum() != 0)
+					tip = MediaUtils.formatTime(progress);
+
 				SongProgressTipDialog songProgressTipDialog = SongProgressTipManage
 						.getSongInfoTipManage().getSongProgressTipDialog();
-				songProgressTipDialog.setSize(new Dimension(tip.length()
-						* Constants.APPFONTSIZE, Constants.APPFONTSIZE + 10));
+
+				songProgressTipDialog.getTipPanel().setTipString(tip);
+
+				songProgressTipDialog.setSize(new Dimension(
+						songProgressTipDialog.getTipPanel().getTextWidth() + 8,
+						Constants.APPFONTSIZE + 8));
 				int x = e.getXOnScreen();
 				int y = songSlider.getLocationOnScreen().y
 						+ songSlider.getHeight() + 10;
 
-				songProgressTipDialog.getTipLabel().setText(tip);
 				songProgressTipDialog.setLocation(x, y);
 				SongProgressTipManage.showSongProgressTipDialog();
 			}
@@ -654,6 +660,7 @@ public class OperatePanel extends JPanel implements Observer {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
+				SongProgressTipManage.hideSongProgressTipDialog();
 			}
 
 			@Override
@@ -666,6 +673,36 @@ public class OperatePanel extends JPanel implements Observer {
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
+			}
+		});
+		volumeSlider.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				int progress = volumeSlider.getMaximum() * e.getX()
+						/ volumeSlider.getWidth();
+
+				String tip = progress + "";
+
+				SongProgressTipDialog songProgressTipDialog = SongProgressTipManage
+						.getSongInfoTipManage().getSongProgressTipDialog();
+
+				songProgressTipDialog.getTipPanel().setTipString(tip);
+
+				songProgressTipDialog.setSize(new Dimension(
+						songProgressTipDialog.getTipPanel().getTextWidth() + 8,
+						Constants.APPFONTSIZE + 8));
+				int x = e.getXOnScreen();
+				int y = volumeSlider.getLocationOnScreen().y
+						+ volumeSlider.getHeight() + 10;
+
+				songProgressTipDialog.setLocation(x, y);
+				SongProgressTipManage.showSongProgressTipDialog();
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+
 			}
 		});
 

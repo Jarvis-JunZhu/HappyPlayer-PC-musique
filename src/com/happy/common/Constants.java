@@ -215,7 +215,7 @@ public class Constants {
 	/**
 	 * 歌词最小大小
 	 */
-	public static int lrcFontMinSize = 40;
+	public static int lrcFontMinSize = 30;
 	/**
 	 * 歌词最大大小
 	 */

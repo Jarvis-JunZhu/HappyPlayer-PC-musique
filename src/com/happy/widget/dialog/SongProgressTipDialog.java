@@ -3,7 +3,9 @@ package com.happy.widget.dialog;
 import java.awt.BorderLayout;
 
 import javax.swing.JDialog;
-import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import com.happy.widget.panel.ToolTipPanel;
 
 /**
  * 歌曲进度提示窗口
@@ -17,10 +19,11 @@ public class SongProgressTipDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	/**
-	 * 提示文本
+	 * 背景
 	 */
-	private JLabel tipLabel;
+	private ToolTipPanel tipPanel = new ToolTipPanel();
 
 	public SongProgressTipDialog() {
 		// 设定禁用窗体装饰，这样就取消了默认的窗体结构
@@ -31,12 +34,11 @@ public class SongProgressTipDialog extends JDialog {
 
 	private void initComponent() {
 		this.getContentPane().setLayout(new BorderLayout());
-		tipLabel = new JLabel("00:00", JLabel.CENTER);
-		this.getContentPane().add(tipLabel, BorderLayout.CENTER);
+		this.getContentPane().add(tipPanel, BorderLayout.CENTER);
 	}
 
-	public JLabel getTipLabel() {
-		return tipLabel;
+	public ToolTipPanel getTipPanel() {
+		return tipPanel;
 	}
 
 }

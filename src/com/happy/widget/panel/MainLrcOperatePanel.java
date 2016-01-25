@@ -82,6 +82,10 @@ public class MainLrcOperatePanel extends JPanel {
 	 * 歌词颜色索引
 	 */
 	private int lrcColorIndex = Constants.lrcColorIndex;
+	/**
+	 * 更多按钮
+	 */
+	private MainLrcOperateButton moreButton;
 
 	public MainLrcOperatePanel(int width, int height, int loX, int loY) {
 		this.loX = loX;
@@ -139,6 +143,7 @@ public class MainLrcOperatePanel extends JPanel {
 				showButtonOverIconPath, showButtonPressedIconPath, width,
 				height, mouseListener, this, false, false);
 		showButton.setBounds(hideX, hideY, hideWidth, hideHeight);
+		showButton.setToolTipText("显示菜单");
 		showButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -174,6 +179,7 @@ public class MainLrcOperatePanel extends JPanel {
 				increaseButtonOverIconPath, increaseButtonPressedIconPath,
 				bWidth / 3 * 2, bWidth / 3 * 2, mouseListener, this, true, true);
 		increaseButton.setBounds(bx, 0, bWidth, bWidth);
+		increaseButton.setToolTipText("字体增大");
 		increaseButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -205,7 +211,7 @@ public class MainLrcOperatePanel extends JPanel {
 		decreaseButton.setBounds(bx,
 				increaseButton.getY() + increaseButton.getHeight(), bWidth,
 				bWidth);
-
+		decreaseButton.setToolTipText("字体减少");
 		decreaseButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -237,6 +243,26 @@ public class MainLrcOperatePanel extends JPanel {
 			this.add(lrcColorPanels[i]);
 		}
 		lrcColorPanels[lrcColorIndex].setSelect(true);
+		// 更多
+		String moreButtonBaseIconPath = iconPath + "more_def.png";
+		String moreButtonOverIconPath = iconPath + "more_hot.png";
+		String moreButtonPressedIconPath = iconPath + "more_down.png";
+
+		// 更多按钮
+		moreButton = new MainLrcOperateButton(moreButtonBaseIconPath,
+				moreButtonOverIconPath, moreButtonPressedIconPath,
+				bWidth / 3 * 2, bWidth / 3 * 2, mouseListener, this, true, true);
+		int y = decreaseButton.getY() + bWidth * (lrcColorPanels.length + 1) + 5;
+		moreButton.setBounds(bx, y, bWidth, bWidth);
+		moreButton.setToolTipText("更多");
+		moreButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+
+		this.add(moreButton);
 		this.add(hideButton);
 		this.add(showButton);
 		this.add(increaseButton);

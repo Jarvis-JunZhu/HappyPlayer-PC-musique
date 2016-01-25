@@ -16,6 +16,7 @@ import com.happy.model.MessageIntent;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
 import com.happy.widget.button.DesOperateButton;
+import com.happy.widget.label.DesOperateLabel;
 
 /**
  * 桌面操作面板
@@ -97,17 +98,14 @@ public class DesOperatePanel extends JPanel implements Observer {
 
 		int buttonSize = mHeight;
 
-		String liconPath = iconPath + "ic_launcher.png";
-		// ImageIcon icon = new ImageIcon(liconPath);
-		// icon.setImage(icon.getImage().getScaledInstance(buttonSize,
-		// buttonSize,
-		// Image.SCALE_SMOOTH));
-		// JLabel iconLabel = new JLabel(icon);
-		//
-		// iconLabel.setBounds(0, 0, buttonSize, buttonSize);
+		String iconButtonBaseIconPath = iconPath + "icon_def.png";
+		String iconButtonOverIconPath = iconPath + "icon_hot.png";
+		String iconButtonPressedIconPath = iconPath + "icon_down.png";
 
-		DesOperateButton iconButton = new DesOperateButton(liconPath,
-				buttonSize, buttonSize, desLrcDialogMouseListener, this);
+		DesOperateButton iconButton = new DesOperateButton(
+				iconButtonBaseIconPath, iconButtonOverIconPath,
+				iconButtonPressedIconPath, buttonSize, buttonSize,
+				desLrcDialogMouseListener, this);
 		iconButton.setBounds(0, 0, buttonSize, buttonSize);
 
 		iconButton.addActionListener(new ActionListener() {
@@ -253,6 +251,11 @@ public class DesOperatePanel extends JPanel implements Observer {
 				ObserverManage.getObserver().setMessage(messageIntent);
 			}
 		});
+
+		DesOperateLabel bgl = new DesOperateLabel(mWidth, mHeight,
+				desLrcDialogMouseListener, this);
+		bgl.setBounds(0, 0, mWidth, mHeight);
+
 		this.add(lockButton);
 		this.add(iconButton);
 		this.add(preButton);
@@ -260,7 +263,7 @@ public class DesOperatePanel extends JPanel implements Observer {
 		this.add(pauseButton);
 		this.add(nextButton);
 		this.add(closeButton);
-
+		this.add(bgl);
 	}
 
 	public boolean getEnter() {
