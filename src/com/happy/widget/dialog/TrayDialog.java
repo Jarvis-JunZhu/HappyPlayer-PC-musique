@@ -81,6 +81,7 @@ public class TrayDialog extends JDialog implements Observer {
 		@Override
 		public void lrcClick() {
 			if (Constants.showDesktopLyrics) {
+				setVisible(false);
 				trayLockPanel.setShow(true);
 			} else {
 				trayLockPanel.setShow(false);
@@ -197,7 +198,7 @@ public class TrayDialog extends JDialog implements Observer {
 
 		//
 		songTitleLabel = new JLabel("", JLabel.CENTER);
-		songTitleLabel.setForeground(new Color(207, 207, 207));
+		songTitleLabel.setForeground(new Color(102, 102, 102));
 		Font font = FontsUtil.getBaseFont(cHeight / 2 + 2);
 		songTitleLabel.setFont(font);
 		songTitleLabel.setBounds(padding, separatorJPanel2.getY() - padding
