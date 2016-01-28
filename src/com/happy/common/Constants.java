@@ -208,8 +208,8 @@ public class Constants {
 	/**
 	 * 歌词颜色集合
 	 */
-	public static Color[] lrcColorStr = { new Color(250, 218, 131),
-			new Color(138, 1, 226), new Color(225, 125, 179),
+	public static Color[] lrcColorStr = { new Color(138, 1, 226),
+			new Color(250, 218, 131), new Color(225, 125, 179),
 			new Color(157, 196, 0) };
 
 	/**
@@ -233,11 +233,11 @@ public class Constants {
 	/**
 	 * 桌面歌词最小大小
 	 */
-	public static int desktopLrcFontMinSize = 150;
+	public static int desktopLrcFontMinSize = 250;
 	/**
 	 * 桌面歌词最大大小
 	 */
-	public static int desktopLrcFontMaxSize = 150;
+	public static int desktopLrcFontMaxSize = 300;
 	/**
 	 * 桌面歌词大小
 	 */
@@ -251,15 +251,23 @@ public class Constants {
 	/**
 	 * 未读歌词颜色
 	 */
-	public static Color DESLRCNOREADCOLOR[] = { new Color(150, 209, 254),
-			new Color(214, 142, 237), new Color(214, 215, 214),
-			new Color(233, 74, 69) };
+	public static Color DESLRCNOREADCOLORFRIST[] = { new Color(0, 52, 138),
+			new Color(255, 255, 255), new Color(255, 172, 0),
+			new Color(225, 225, 225), new Color(64, 0, 128) };
+
+	public static Color DESLRCNOREADCOLORSECOND[] = { new Color(3, 202, 252),
+			new Color(255, 255, 255), new Color(170, 0, 0), new Color(0, 0, 0),
+			new Color(255, 128, 255) };
 	/**
 	 * 已读歌词颜色
 	 */
-	public static Color DESLRCREADEDCOLOR[] = { new Color(229, 146, 230),
-			new Color(248, 246, 151), new Color(133, 208, 255),
-			new Color(255, 193, 120) };
+	public static Color DESLRCREADEDCOLORFRIST[] = { new Color(130, 247, 253),
+			new Color(255, 255, 0), new Color(255, 255, 0),
+			new Color(0, 255, 255), new Color(255, 243, 146) };
+
+	public static Color DESLRCREADEDCOLORSECOND[] = { new Color(255, 255, 255),
+			new Color(255, 255, 0), new Color(255, 100, 26),
+			new Color(255, 255, 255), new Color(255, 243, 134) };
 
 	/***
 	 * 桌面歌词颜色
@@ -300,6 +308,7 @@ public class Constants {
 	 * 桌面歌词是否锁住
 	 */
 	public static boolean desLrcIsLock = false;
+	public static String desLrcIsLock_KEY = "desLrcIsLock_KEY";
 
 	/**
 	 * 获取年份

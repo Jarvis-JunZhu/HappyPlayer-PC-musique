@@ -60,7 +60,7 @@ public class DesLrcDialog extends JDialog implements Observer {
 	public DesLrcDialog() {
 
 		Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-		mHeight = screenDimension.height / 6;
+		mHeight = screenDimension.height / 6 - 10;
 		mWidth = screenDimension.width;
 		mY = screenDimension.height;
 
@@ -71,6 +71,7 @@ public class DesLrcDialog extends JDialog implements Observer {
 		this.setMinimumSize(new Dimension(mWidth / 3 * 2, mHeight));
 		this.setMaximumSize(new Dimension(mWidth, mHeight));
 		this.setUndecorated(true);
+		this.setAlwaysOnTop(true);
 		AWTUtilities.setWindowOpaque(this, false);// 关键代码！ 设置窗体透明
 
 		initLockEvent();
@@ -91,7 +92,7 @@ public class DesLrcDialog extends JDialog implements Observer {
 	private void initComponent() {
 		this.getContentPane().setLayout(null);
 
-		int width = mHeight / 5 * 6 + 10 * 5;
+		int width = mHeight / 5 * 15 + 10 * 15;
 
 		desOperatePanel = new DesOperatePanel(width, mHeight / 5,
 				desLrcDialogMouseListener);

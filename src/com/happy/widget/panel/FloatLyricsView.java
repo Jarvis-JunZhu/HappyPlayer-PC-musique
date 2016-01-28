@@ -158,8 +158,11 @@ public class FloatLyricsView extends JPanel implements Observer {
 	 * 
 	 */
 	private void initPaintHLDEFColor(float x, float y, int height) {
-		paintHLDEF = new GradientPaint(x, y, new Color(0, 52, 138), x, y
-				+ height, new Color(0, 128, 192), true);
+		paintHLDEF = new GradientPaint(x, y - height / 2,
+				Constants.DESLRCNOREADCOLORFRIST[Constants.desktopLrcIndex], x,
+				y + height,
+				Constants.DESLRCNOREADCOLORSECOND[Constants.desktopLrcIndex],
+				true);
 	}
 
 	/**
@@ -167,17 +170,12 @@ public class FloatLyricsView extends JPanel implements Observer {
 	 * 
 	 */
 	private void initPaintHLEDColor(float x, float y, int height) {
-		// Point2D start = new Point2D.Float(x, y);
-		// Point2D end = new Point2D.Float(x + width, y + height);
-		// float[] dist = { 0.0f, 0.2f, 1.0f };
-		// Color[] colors = { new Color(130, 247, 253), new Color(255, 255,
-		// 255),
-		// new Color(3, 233, 252) };
-		// paintHLED = new LinearGradientPaint(start, end, dist, colors,
-		// CycleMethod.NO_CYCLE);
 
-		paintHLED = new GradientPaint(x, y, new Color(130, 247, 253), x, y
-				+ height, new Color(255, 255, 255), true);
+		paintHLED = new GradientPaint(x, y - height / 2,
+				Constants.DESLRCREADEDCOLORFRIST[Constants.desktopLrcIndex], x,
+				y + height,
+				Constants.DESLRCREADEDCOLORSECOND[Constants.desktopLrcIndex],
+				true);
 	}
 
 	/**
@@ -202,9 +200,12 @@ public class FloatLyricsView extends JPanel implements Observer {
 		Graphics2D g2d = (Graphics2D) g;
 		// 以达到边缘平滑的效果
 
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
+				RenderingHints.VALUE_STROKE_PURE);
+		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+				RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		//
 		// g2d.setFont(new Font("宋体", Font.BOLD, (int) SCALEIZEWORDDEF));
 		g2d.setFont(baseFont);
@@ -230,7 +231,6 @@ public class FloatLyricsView extends JPanel implements Observer {
 	 */
 	private void drawDefText(Graphics2D g2d) {
 		String tip = Constants.APPTIPTITLE;
-		g2d.setPaint(Constants.DESLRCREADEDCOLOR[Constants.desktopLrcIndex]);
 
 		FontMetrics fm = g2d.getFontMetrics();
 		Rectangle2D rc = fm.getStringBounds(tip, g2d);
@@ -268,11 +268,12 @@ public class FloatLyricsView extends JPanel implements Observer {
 	 * @param y
 	 */
 	private void drawBackground(Graphics2D g2d, String string, float x, float y) {
-		g2d.setPaint(new Color(0, 0, 0, 100));
-		g2d.drawString(string, x - 2, y);
-		g2d.drawString(string, x + 2, y);
-		g2d.drawString(string, x, y + 2);
-		g2d.drawString(string, x, y - 2);
+		g2d.setColor(new Color(0, 0, 0, 200));
+		g2d.drawString(string, x - 1, y);
+		g2d.drawString(string, x + 1, y);
+		g2d.drawString(string, x, y + 1);
+		g2d.drawString(string, x, y - 1);
+
 	}
 
 	/**

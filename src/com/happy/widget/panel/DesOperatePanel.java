@@ -17,6 +17,7 @@ import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
 import com.happy.widget.button.DesOperateButton;
 import com.happy.widget.label.DesOperateLabel;
+import com.happy.widget.panel.DesLrcColorParentPanel.DesLrcEvent;
 
 /**
  * 桌面操作面板
@@ -55,6 +56,10 @@ public class DesOperatePanel extends JPanel implements Observer {
 	 * 下一首
 	 */
 	private DesOperateButton nextButton;
+	/**
+	 * 桌面歌词颜色面板
+	 */
+	private DesLrcColorParentPanel[] lrcColorPanels;
 
 	/**
 	 * 基本图标路径
@@ -70,6 +75,11 @@ public class DesOperatePanel extends JPanel implements Observer {
 	private MouseInputListener desLrcDialogMouseListener;
 
 	private MouseListener mouseListener = new MouseListener();
+
+	/**
+	 * 歌词颜色索引
+	 */
+	private int lrcColorIndex = Constants.desktopLrcIndex;
 
 	public DesOperatePanel(int width, int height,
 			MouseInputListener desLrcDialogMouseListener) {
@@ -104,9 +114,10 @@ public class DesOperatePanel extends JPanel implements Observer {
 
 		DesOperateButton iconButton = new DesOperateButton(
 				iconButtonBaseIconPath, iconButtonOverIconPath,
-				iconButtonPressedIconPath, buttonSize, buttonSize,
+				iconButtonPressedIconPath, (buttonSize - 5), (buttonSize - 5),
 				desLrcDialogMouseListener, this);
-		iconButton.setBounds(0, 0, buttonSize, buttonSize);
+		iconButton.setBounds(padding, (mHeight - (buttonSize - 5)) / 2 + 1,
+				(buttonSize - 5), (buttonSize - 5));
 
 		iconButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -117,35 +128,17 @@ public class DesOperatePanel extends JPanel implements Observer {
 			}
 		});
 
-		String lockPath = iconPath + "minilycic_lock.png";
-		DesOperateButton lockButton = new DesOperateButton(lockPath,
-				buttonSize, buttonSize, desLrcDialogMouseListener, this);
-		lockButton.setBounds(iconButton.getX() + iconButton.getWidth()
-				+ padding, 0, buttonSize, buttonSize);
-
-		lockButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				if (!Constants.desLrcIsLock) {
-					Constants.desLrcIsLock = true;
-					MessageIntent messageIntent = new MessageIntent();
-					messageIntent.setAction(MessageIntent.LOCKDESLRC);
-					ObserverManage.getObserver().setMessage(messageIntent);
-				}
-			}
-		});
-
 		// 上一首
-		String preButtonBaseIconPath = iconPath + "pre_normal1.png";
-		String preButtonOverIconPath = iconPath + "pre_hot1.png";
-		String preButtonPressedIconPath = iconPath + "pre_down1.png";
+		String preButtonBaseIconPath = iconPath + "desPre_def.png";
+		String preButtonOverIconPath = iconPath + "desPre_hot.png";
+		String preButtonPressedIconPath = iconPath + "desPre_down.png";
 
 		preButton = new DesOperateButton(preButtonBaseIconPath,
 				preButtonOverIconPath, preButtonPressedIconPath, buttonSize,
 				buttonSize, desLrcDialogMouseListener, this);
 
 		preButton.setBounds(
-				lockButton.getX() + lockButton.getWidth() + padding, 0,
+				iconButton.getX() + iconButton.getWidth() + padding, 0,
 				buttonSize, buttonSize);
 		preButton.setToolTipText("上一首");
 
@@ -160,9 +153,9 @@ public class DesOperatePanel extends JPanel implements Observer {
 
 		// 播放按钮
 
-		String playButtonBaseIconPath = iconPath + "play_normal1.png";
-		String playButtonOverIconPath = iconPath + "play_hot1.png";
-		String playButtonPressedIconPath = iconPath + "play_down1.png";
+		String playButtonBaseIconPath = iconPath + "desPlay_def.png";
+		String playButtonOverIconPath = iconPath + "desPlay_hot.png";
+		String playButtonPressedIconPath = iconPath + "desPlay_down.png";
 
 		playButton = new DesOperateButton(playButtonBaseIconPath,
 				playButtonOverIconPath, playButtonPressedIconPath, buttonSize,
@@ -182,9 +175,9 @@ public class DesOperatePanel extends JPanel implements Observer {
 		});
 
 		// 暂停按钮
-		String pauseButtonBaseIconPath = iconPath + "pause_normal1.png";
-		String pauseButtonOverIconPath = iconPath + "pause_hot1.png";
-		String pauseButtonPressedIconPath = iconPath + "pause_down1.png";
+		String pauseButtonBaseIconPath = iconPath + "desPause_def.png";
+		String pauseButtonOverIconPath = iconPath + "desPause_hot.png";
+		String pauseButtonPressedIconPath = iconPath + "desPause_down.png";
 
 		pauseButton = new DesOperateButton(pauseButtonBaseIconPath,
 				pauseButtonOverIconPath, pauseButtonPressedIconPath,
@@ -208,9 +201,9 @@ public class DesOperatePanel extends JPanel implements Observer {
 
 		// 下一首
 
-		String nextButtonBaseIconPath = iconPath + "next_normal1.png";
-		String nextButtonOverIconPath = iconPath + "next_hot1.png";
-		String nextButtonPressedIconPath = iconPath + "next_down1.png";
+		String nextButtonBaseIconPath = iconPath + "desNext_def.png";
+		String nextButtonOverIconPath = iconPath + "desNext_hot.png";
+		String nextButtonPressedIconPath = iconPath + "desNext_down.png";
 
 		nextButton = new DesOperateButton(nextButtonBaseIconPath,
 				nextButtonOverIconPath, nextButtonPressedIconPath, buttonSize,
@@ -229,16 +222,164 @@ public class DesOperatePanel extends JPanel implements Observer {
 			}
 		});
 
+		// 增加按钮
+		String increaseButtonBaseIconPath = iconPath + "desIncrease_def.png";
+		String increaseButtonOverIconPath = iconPath + "desIncrease_hot.png";
+		String increaseButtonPressedIconPath = iconPath
+				+ "desIncrease_down.png";
+
+		// 增加按钮
+		DesOperateButton increaseButton = new DesOperateButton(
+				increaseButtonBaseIconPath, increaseButtonOverIconPath,
+				increaseButtonPressedIconPath, buttonSize, buttonSize,
+				desLrcDialogMouseListener, this);
+
+		increaseButton.setBounds(nextButton.getX() + nextButton.getWidth()
+				+ padding, 0, buttonSize, buttonSize);
+		increaseButton.setToolTipText("字体增大");
+		increaseButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int fontSize = Constants.desktopLrcFontSize;
+				if (fontSize == Constants.desktopLrcFontMaxSize) {
+					return;
+				} else {
+					fontSize = fontSize + 5;
+					if (fontSize > Constants.desktopLrcFontMaxSize)
+						fontSize = Constants.desktopLrcFontMaxSize;
+				}
+				Constants.desktopLrcFontSize = fontSize;
+
+				new Thread() {
+
+					@Override
+					public void run() {
+
+						MessageIntent messageIntent = new MessageIntent();
+						messageIntent
+								.setAction(MessageIntent.DESKSCMANYLINEFONTSIZE);
+						ObserverManage.getObserver().setMessage(messageIntent);
+
+					}
+
+				}.start();
+			}
+		});
+
+		// 减少按钮
+		String decreaseButtonBaseIconPath = iconPath + "desDecrease_def.png";
+		String decreaseButtonOverIconPath = iconPath + "desDecrease_hot.png";
+		String decreaseButtonPressedIconPath = iconPath
+				+ "desDecrease_down.png";
+		// 减少按钮
+		DesOperateButton decreaseButton = new DesOperateButton(
+				decreaseButtonBaseIconPath, decreaseButtonOverIconPath,
+				decreaseButtonPressedIconPath, buttonSize, buttonSize,
+				desLrcDialogMouseListener, this);
+
+		decreaseButton.setBounds(
+				increaseButton.getX() + increaseButton.getWidth() + padding, 0,
+				buttonSize, buttonSize);
+		decreaseButton.setToolTipText("字体减少");
+		decreaseButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int fontSize = Constants.desktopLrcFontSize;
+				if (fontSize == Constants.desktopLrcFontMinSize) {
+					return;
+				} else {
+					fontSize = fontSize - 5;
+					if (fontSize < Constants.desktopLrcFontMinSize)
+						fontSize = Constants.desktopLrcFontMinSize;
+				}
+				Constants.desktopLrcFontSize = fontSize;
+
+				new Thread() {
+
+					@Override
+					public void run() {
+
+						MessageIntent messageIntent = new MessageIntent();
+						messageIntent
+								.setAction(MessageIntent.DESKSCMANYLINEFONTSIZE);
+						ObserverManage.getObserver().setMessage(messageIntent);
+
+					}
+
+				}.start();
+			}
+
+		});
+
+		lrcColorPanels = new DesLrcColorParentPanel[Constants.DESLRCNOREADCOLORFRIST.length];
+		//
+		int x = (decreaseButton.getX() + decreaseButton.getWidth() + padding);
+		for (int i = 0; i < lrcColorPanels.length; i++) {
+			lrcColorPanels[i] = new DesLrcColorParentPanel(buttonSize,
+					buttonSize, Constants.DESLRCNOREADCOLORFRIST[i],
+					desLrcDialogMouseListener, this, i, lrcEvent);
+
+			lrcColorPanels[i].setBounds(x, 0, buttonSize, buttonSize);
+			this.add(lrcColorPanels[i]);
+
+			x = x + buttonSize + padding;
+		}
+
+		lrcColorPanels[lrcColorIndex].setSelect(true);
+
+		// 制作歌词
+		String makeLrcButtonBaseIconPath = iconPath + "desMakeLrc_def.png";
+		String makeLrcButtonOverIconPath = iconPath + "desMakeLrc_hot.png";
+		String makeLrcButtonPressedIconPath = iconPath + "desMakeLrc_down.png";
+		// 制作歌词按钮
+		DesOperateButton makeLrcButton = new DesOperateButton(
+				makeLrcButtonBaseIconPath, makeLrcButtonOverIconPath,
+				makeLrcButtonPressedIconPath, buttonSize * 2, buttonSize,
+				mouseListener, this);
+		makeLrcButton.setBounds(x, 0, buttonSize * 2, buttonSize);
+		makeLrcButton.setToolTipText("制作歌词");
+		makeLrcButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+
+		// 锁
+		String lockButtonBaseIconPath = iconPath + "desLock_def.png";
+		String lockButtonOverIconPath = iconPath + "desLock_hot.png";
+		String lockButtonPressedIconPath = iconPath + "desLock_down.png";
+		DesOperateButton lockButton = new DesOperateButton(
+				lockButtonBaseIconPath, lockButtonOverIconPath,
+				lockButtonPressedIconPath, buttonSize, buttonSize,
+				desLrcDialogMouseListener, this);
+		lockButton.setBounds(makeLrcButton.getX() + makeLrcButton.getWidth()
+				+ padding, 0, buttonSize, buttonSize);
+
+		lockButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (!Constants.desLrcIsLock) {
+					Constants.desLrcIsLock = true;
+					MessageIntent messageIntent = new MessageIntent();
+					messageIntent.setAction(MessageIntent.LOCKDESLRC);
+					ObserverManage.getObserver().setMessage(messageIntent);
+				}
+			}
+		});
+
 		// 关闭按钮
-		String closeButtonBaseIconPath = iconPath + "close_normal1.png";
-		String closeButtonOverIconPath = iconPath + "close_hot1.png";
-		String closeButtonPressedIconPath = iconPath + "close_hot1.png";
+		String closeButtonBaseIconPath = iconPath + "desClose_def.png";
+		String closeButtonOverIconPath = iconPath + "desClose_hot.png";
+		String closeButtonPressedIconPath = iconPath + "desClose_down.png";
 
 		DesOperateButton closeButton = new DesOperateButton(
 				closeButtonBaseIconPath, closeButtonOverIconPath,
 				closeButtonPressedIconPath, buttonSize, buttonSize,
 				desLrcDialogMouseListener, this);
-		closeButton.setBounds(nextButton.getX() + nextButton.getWidth()
+		closeButton.setBounds(lockButton.getX() + lockButton.getWidth()
 				+ padding, 0, buttonSize, buttonSize);
 		closeButton.setToolTipText("关闭");
 		closeButton.addActionListener(new ActionListener() {
@@ -256,15 +397,35 @@ public class DesOperatePanel extends JPanel implements Observer {
 				desLrcDialogMouseListener, this);
 		bgl.setBounds(0, 0, mWidth, mHeight);
 
-		this.add(lockButton);
 		this.add(iconButton);
 		this.add(preButton);
 		this.add(playButton);
 		this.add(pauseButton);
 		this.add(nextButton);
+		this.add(increaseButton);
+		this.add(decreaseButton);
+		this.add(makeLrcButton);
+		this.add(lockButton);
 		this.add(closeButton);
 		this.add(bgl);
 	}
+
+	private DesLrcEvent lrcEvent = new DesLrcEvent() {
+
+		@Override
+		public void select(int index) {
+			if (index != lrcColorIndex) {
+				lrcColorPanels[lrcColorIndex].setSelect(false);
+				lrcColorIndex = index;
+				Constants.desktopLrcIndex = index;
+				lrcColorPanels[lrcColorIndex].setSelect(true);
+
+				MessageIntent messageIntent = new MessageIntent();
+				messageIntent.setAction(MessageIntent.DESKSCMANYLINELRCCOLOR);
+				ObserverManage.getObserver().setMessage(messageIntent);
+			}
+		}
+	};
 
 	public boolean getEnter() {
 		return isEnter;

@@ -31,7 +31,7 @@ import com.happy.observable.ObserverManage;
 import com.happy.util.MediaUtils;
 import com.happy.widget.button.BaseButton;
 import com.happy.widget.dialog.DesLrcDialog;
-import com.happy.widget.dialog.SongProgressTipDialog;
+import com.happy.widget.dialog.ProgressTipDialog;
 import com.happy.widget.slider.BaseSlider;
 
 /**
@@ -256,7 +256,7 @@ public class OperatePanel extends JPanel implements Observer {
 				if (songSlider.getMaximum() != 0)
 					tip = MediaUtils.formatTime(progress);
 
-				SongProgressTipDialog songProgressTipDialog = SongProgressTipManage
+				ProgressTipDialog songProgressTipDialog = SongProgressTipManage
 						.getSongInfoTipManage().getSongProgressTipDialog();
 
 				songProgressTipDialog.getTipPanel().setTipString(tip);
@@ -684,7 +684,7 @@ public class OperatePanel extends JPanel implements Observer {
 
 				String tip = progress + "";
 
-				SongProgressTipDialog songProgressTipDialog = SongProgressTipManage
+				ProgressTipDialog songProgressTipDialog = SongProgressTipManage
 						.getSongInfoTipManage().getSongProgressTipDialog();
 
 				songProgressTipDialog.getTipPanel().setTipString(tip);

@@ -83,9 +83,9 @@ public class MainLrcOperatePanel extends JPanel {
 	 */
 	private int lrcColorIndex = Constants.lrcColorIndex;
 	/**
-	 * 更多按钮
+	 * 制作歌词按钮
 	 */
-	private MainLrcOperateButton moreButton;
+	private MainLrcOperateButton makeLrcButton;
 
 	public MainLrcOperatePanel(int width, int height, int loX, int loY) {
 		this.loX = loX;
@@ -107,7 +107,7 @@ public class MainLrcOperatePanel extends JPanel {
 		String hideButtonPressedIconPath = iconPath + "hide_down.png";
 
 		int hideWidth = width / 5;
-		int hideHeight = height / 5;
+		int hideHeight = height / 10;
 		int hideX = 0;
 		int hideY = (height - hideHeight) / 2;
 
@@ -243,26 +243,26 @@ public class MainLrcOperatePanel extends JPanel {
 			this.add(lrcColorPanels[i]);
 		}
 		lrcColorPanels[lrcColorIndex].setSelect(true);
-		// 更多
-		String moreButtonBaseIconPath = iconPath + "more_def.png";
-		String moreButtonOverIconPath = iconPath + "more_hot.png";
-		String moreButtonPressedIconPath = iconPath + "more_down.png";
+		// 制作歌词
+		String makeLrcButtonBaseIconPath = iconPath + "makeLrc_def.png";
+		String makeLrcButtonOverIconPath = iconPath + "makeLrc_hot.png";
+		String makeLrcButtonPressedIconPath = iconPath + "makeLrc_down.png";
 
-		// 更多按钮
-		moreButton = new MainLrcOperateButton(moreButtonBaseIconPath,
-				moreButtonOverIconPath, moreButtonPressedIconPath,
-				bWidth / 3 * 2, bWidth / 3 * 2, mouseListener, this, true, true);
-		int y = decreaseButton.getY() + bWidth * (lrcColorPanels.length + 1) + 5;
-		moreButton.setBounds(bx, y, bWidth, bWidth);
-		moreButton.setToolTipText("更多");
-		moreButton.addActionListener(new ActionListener() {
+		// 制作歌词按钮
+		makeLrcButton = new MainLrcOperateButton(makeLrcButtonBaseIconPath,
+				makeLrcButtonOverIconPath, makeLrcButtonPressedIconPath,
+				bWidth / 3 * 2, bWidth / 3 * 2 * 2 + 10, mouseListener, this,
+				true, true);
+		int y = decreaseButton.getY() + bWidth * (lrcColorPanels.length + 1);
+		makeLrcButton.setBounds(bx, y, bWidth, bWidth * 2);
+		makeLrcButton.setToolTipText("制作歌词");
+		makeLrcButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-
-		this.add(moreButton);
+		this.add(makeLrcButton);
 		this.add(hideButton);
 		this.add(showButton);
 		this.add(increaseButton);

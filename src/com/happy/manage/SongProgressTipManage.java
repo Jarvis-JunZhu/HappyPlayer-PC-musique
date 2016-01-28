@@ -1,6 +1,6 @@
 package com.happy.manage;
 
-import com.happy.widget.dialog.SongProgressTipDialog;
+import com.happy.widget.dialog.ProgressTipDialog;
 
 /**
  * 歌曲进度提示管理
@@ -31,15 +31,16 @@ public class SongProgressTipManage {
 	 *            高度
 	 */
 	public SongProgressTipManage() {
-		songProgressTipDialog = new SongProgressTipDialog();
+		songProgressTipDialog = new ProgressTipDialog();
+		songProgressTipDialog.setVisible(false);
 	}
 
 	/**
 	 * 歌曲进度提示窗口
 	 */
-	private static SongProgressTipDialog songProgressTipDialog;
+	private static ProgressTipDialog songProgressTipDialog;
 
-	public SongProgressTipDialog getSongProgressTipDialog() {
+	public ProgressTipDialog getSongProgressTipDialog() {
 		return songProgressTipDialog;
 	}
 

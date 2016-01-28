@@ -178,15 +178,25 @@ public class DataUtil {
 			// 音量
 			Constants.volumeSize = Integer.parseInt(baseDataProperties
 					.getProperty(Constants.volumeSize_KEY));
-			
+
 			// 歌词大小
 			Constants.lrcFontSize = Integer.parseInt(baseDataProperties
 					.getProperty(Constants.lrcFontSize_KEY));
 
+			// 桌面歌词大小
+			Constants.desktopLrcFontSize = Integer.parseInt(baseDataProperties
+					.getProperty(Constants.desktopLrcFontSize_KEY));
+			// 桌面歌词索引
+			Constants.desktopLrcIndex = Integer.parseInt(baseDataProperties
+					.getProperty(Constants.desktopLrcIndex_KEY));
+			// 锁歌词
+			Constants.desLrcIsLock = Boolean.parseBoolean(baseDataProperties
+					.getProperty(Constants.desLrcIsLock_KEY));
+
 			return true;
 		} catch (Exception e) {
 			logger.error("解析基本数据配置文件出错!!");
-			baseDataFile.deleteOnExit();
+			// baseDataFile.deleteOnExit();
 			e.printStackTrace();
 		}
 		return false;
@@ -417,10 +427,18 @@ public class DataUtil {
 
 		baseDataProperties.put(Constants.volumeSize_KEY,
 				String.valueOf(Constants.volumeSize));
-		
-		
+
 		baseDataProperties.put(Constants.lrcFontSize_KEY,
 				String.valueOf(Constants.lrcFontSize));
+
+		baseDataProperties.put(Constants.desktopLrcFontSize_KEY,
+				String.valueOf(Constants.desktopLrcFontSize));
+
+		baseDataProperties.put(Constants.desktopLrcIndex_KEY,
+				String.valueOf(Constants.desktopLrcIndex));
+
+		baseDataProperties.put(Constants.desLrcIsLock_KEY,
+				String.valueOf(Constants.desLrcIsLock));
 
 		try {
 			FileOutputStream out = new FileOutputStream(baseDataFile);

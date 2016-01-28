@@ -80,10 +80,10 @@ public class MainMenuPanel extends JPanel implements Observer {
 		closeButton.setToolTipText("关闭");
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 关闭窗口时，保存数据
-				DataUtil.saveData();
-				MediaPlayerService.getMediaPlayerService().close();
-				System.exit(0);
+				//关闭
+				MessageIntent messageIntent = new MessageIntent();
+				messageIntent.setAction(MessageIntent.FRAME_CLOSE);
+				ObserverManage.getObserver().setMessage(messageIntent);
 			}
 		});
 

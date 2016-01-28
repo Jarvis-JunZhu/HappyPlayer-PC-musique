@@ -1,9 +1,17 @@
 package com.happy.ui;
 
+import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
@@ -23,6 +31,7 @@ import com.happy.service.MediaPlayerService;
 import com.happy.util.DataUtil;
 import com.happy.widget.dialog.DesLrcDialog;
 import com.happy.widget.dialog.SkinDialog;
+import com.happy.widget.dialog.TrayDialog;
 import com.happy.widget.panel.MainLrcOperatePanel;
 import com.happy.widget.panel.MainLrcPanel;
 import com.happy.widget.panel.MainMenuPanel;
@@ -56,6 +65,16 @@ public class MainFrame extends JFrame implements Observer {
 	 * 桌面歌词窗口
 	 */
 	private DesLrcDialog desktopLrcDialog;
+	/**
+	 * 系统托盘
+	 */
+	private TrayIcon trayIcon;
+	/**
+	 * 是否支持托盘
+	 */
+	private boolean trayIsSupported = false;
+
+	private TrayDialog trayFrame;
 
 	public MainFrame() {
 		ObserverManage.getObserver().addObserver(this);
@@ -66,6 +85,7 @@ public class MainFrame extends JFrame implements Observer {
 		initSkin();
 		initSkinDialogData();
 		openDesLrcDialog();
+		initTray();
 	}
 
 	/**
@@ -75,14 +95,11 @@ public class MainFrame extends JFrame implements Observer {
 
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent evt) {
-				// 关闭窗口时，保存数据
-				DataUtil.saveData();
-				MediaPlayerService.getMediaPlayerService().close();
-				System.exit(0);
+				close();
 			}
 		});
 
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		title = Constants.APPTITLE;
 		this.setTitle(title);
 		this.setUndecorated(true);
@@ -95,6 +112,86 @@ public class MainFrame extends JFrame implements Observer {
 				+ Constants.iconName;
 		this.setIconImage(new ImageIcon(iconNamePath).getImage());
 
+	}
+
+	/**
+	 * 初始化系统托盘
+	 */
+	private void initTray() {
+		// 判断系统是否支持系统托盘
+		if (SystemTray.isSupported()) {
+			trayIsSupported = true;
+			String iconPath = Constants.PATH_ICON + File.separator
+					+ "trayIcon.png";
+			SystemTray tray = SystemTray.getSystemTray(); // 创建系统托盘
+			ImageIcon icon = new ImageIcon(iconPath);
+			trayIcon = new TrayIcon(icon.getImage());// 创建trayIcon
+			/* 使托盘图片自动调整大小 */
+			trayIcon.setImageAutoSize(true);
+			trayIcon.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					setAlwaysOnTop(true);
+					setExtendedState(Frame.NORMAL);
+					setAlwaysOnTop(false);
+					setVisible(true);
+				}
+			});
+			try {
+				tray.add(trayIcon);
+				trayIcon.addMouseListener(new MouseListener() {
+
+					@Override
+					public void mouseReleased(MouseEvent e) {
+
+					}
+
+					@Override
+					public void mousePressed(MouseEvent e) {
+
+					}
+
+					@Override
+					public void mouseExited(MouseEvent e) {
+
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {
+
+					}
+
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						// 右键
+						if (e.getButton() == MouseEvent.BUTTON3) {
+							if (trayFrame != null) {
+								trayFrame.setVisible(false);
+								trayFrame.dispose();
+							}
+							trayFrame = new TrayDialog();
+							// 屏幕大小
+							Dimension sd = Toolkit.getDefaultToolkit()
+									.getScreenSize();
+							// 除边框(如任务栏)外的屏幕可用大小
+							Insets si = Toolkit
+									.getDefaultToolkit()
+									.getScreenInsets(getGraphicsConfiguration());
+							// x, y为坐标定位
+							int x = e.getX();
+							int y = sd.height - si.bottom
+									- trayFrame.getMHeight() - 3;
+							trayFrame.setLocation(x, y);
+							trayFrame.setVisible(true);
+						}
+					}
+				});
+				trayIcon.setToolTip(title);
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -135,7 +232,7 @@ public class MainFrame extends JFrame implements Observer {
 
 		// 歌词操作面板
 		int loWidht = mainLrcPanel.getWidth() / 8 - 10;
-		int loHeight = (loWidht - loWidht / 5 - 8) * 7;
+		int loHeight = (loWidht - loWidht / 5 - 9) * 8;
 		int loX = Constants.mainFrameWidth - loWidht;
 		int loY = mainLrcPanel.getY() + (mainLrcPanel.getHeight() - loHeight)
 				/ 2;
@@ -210,7 +307,23 @@ public class MainFrame extends JFrame implements Observer {
 				this.setExtendedState(Frame.ICONIFIED);
 			} else if (messageIntent.getAction().equals(
 					MessageIntent.FRAME_NORMAL)) {
-				this.setExtendedState(Frame.NORMAL);
+				if (isVisible()) {
+					if (getState() != Frame.ICONIFIED)
+						setVisible(false);
+					else if (getState() == Frame.ICONIFIED) {
+						setAlwaysOnTop(true);
+						setExtendedState(Frame.NORMAL);
+						setAlwaysOnTop(false);
+					} else {
+						setExtendedState(Frame.NORMAL);
+						setVisible(false);
+					}
+				} else {
+					setAlwaysOnTop(true);
+					setExtendedState(Frame.NORMAL);
+					setAlwaysOnTop(false);
+					setVisible(true);
+				}
 			} else if (messageIntent.getAction().equals(
 					MessageIntent.OPEN_SKINDIALOG)) {
 				onpenSkinDialog();
@@ -222,8 +335,11 @@ public class MainFrame extends JFrame implements Observer {
 				openDesLrcDialog();
 			} else if (messageIntent.getAction().equals(
 					MessageIntent.CLOSEDESLRC)) {
-				desktopLrcDialog.setVisible(false);
+				// desktopLrcDialog.setVisible(false);
 				openDesLrcDialog();
+			} else if (messageIntent.getAction().equals(
+					MessageIntent.FRAME_CLOSE)) {
+				close();
 			}
 		} else if (data instanceof SongMessage) {
 			SongMessage songMessage = (SongMessage) data;
@@ -238,6 +354,9 @@ public class MainFrame extends JFrame implements Observer {
 					title = Constants.APPTITLE;
 				}
 				setTitle(title);
+				if (trayIcon != null) {
+					trayIcon.setToolTip(title);
+				}
 				// this.repaint();
 			}
 		}
@@ -264,12 +383,12 @@ public class MainFrame extends JFrame implements Observer {
 		if (Constants.showDesktopLyrics) {
 
 			// 如果桌面歌词已经锁定，则进行解锁
-			if (Constants.desLrcIsLock) {
-				Constants.desLrcIsLock = false;
-				MessageIntent messageIntent = new MessageIntent();
-				messageIntent.setAction(MessageIntent.LOCKDESLRC);
-				ObserverManage.getObserver().setMessage(messageIntent);
-			}
+			// if (Constants.desLrcIsLock) {
+			// Constants.desLrcIsLock = false;
+			// MessageIntent messageIntent = new MessageIntent();
+			// messageIntent.setAction(MessageIntent.LOCKDESLRC);
+			// ObserverManage.getObserver().setMessage(messageIntent);
+			// }
 			// 获取屏幕边界
 			Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 					this.getGraphicsConfiguration());
@@ -280,10 +399,30 @@ public class MainFrame extends JFrame implements Observer {
 					- desktopLrcDialog.getmHeight();
 			desktopLrcDialog.setLocation(0, y);
 			desktopLrcDialog.setVisible(true);
-			desktopLrcDialog.setAlwaysOnTop(true);
 		} else {
 			desktopLrcDialog.setVisible(false);
 		}
+	}
+
+	/**
+	 * 关闭
+	 */
+	protected void close() {
+		if (!trayIsSupported) {
+			exit();
+		} else {
+			setVisible(false);
+		}
+	}
+
+	/**
+	 * 退出
+	 */
+	private void exit() {
+		// 关闭窗口时，保存数据
+		DataUtil.saveData();
+		MediaPlayerService.getMediaPlayerService().close();
+		System.exit(0);
 	}
 
 }

@@ -11,6 +11,11 @@ public class MessageIntent {
 	 * 窗口最小化
 	 */
 	public static final String FRAME_MIN = "com.happy.frame.min";
+
+	/**
+	 * 窗口关闭
+	 */
+	public static final String FRAME_CLOSE = "com.happy.frame.close";
 	/**
 	 * 默认
 	 */
@@ -24,7 +29,7 @@ public class MessageIntent {
 	 * 关闭皮肤窗口
 	 */
 	public static final String CLOSE_SKINDIALOG = "com.happy.frame.closeskindialog";
-	
+
 	/**
 	 * 更新列表的透明度
 	 */
