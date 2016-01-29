@@ -357,6 +357,7 @@ public class DesOperatePanel extends JPanel implements Observer {
 				desLrcDialogMouseListener, this);
 		lockButton.setBounds(makeLrcButton.getX() + makeLrcButton.getWidth()
 				+ padding, 0, buttonSize, buttonSize);
+		lockButton.setToolTipText("锁定歌词");
 
 		lockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

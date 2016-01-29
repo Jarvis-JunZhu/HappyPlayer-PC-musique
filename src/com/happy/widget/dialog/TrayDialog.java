@@ -117,7 +117,7 @@ public class TrayDialog extends JDialog implements Observer {
 		width = (int) (screenDimension.getWidth() / 8);
 		height = (int) (screenDimension.getHeight() / 4 + 10);
 		cHeight = height / 5 - 6 * padding;
-		height = height - cHeight * 2;
+		height = height - cHeight - 15;
 		this.setSize(width, height);
 		this.setVisible(false);
 		this.setAlwaysOnTop(true);
@@ -177,11 +177,11 @@ public class TrayDialog extends JDialog implements Observer {
 		JPanel separatorJPanel = new JPanel();
 		separatorJPanel.setBackground(new Color(207, 207, 207));
 		separatorJPanel.setBounds(padding * 2, trayExitPanel.getY() - 1
-				- padding, cWidth - padding * 2, 1);
+				- padding * 2, cWidth - padding * 2, 1);
 
 		// 锁面板
 		trayLockPanel = new TrayLockPanel(cWidth, cHeight, trayEvent);
-		trayLockPanel.setBounds(padding, separatorJPanel.getY() - padding
+		trayLockPanel.setBounds(padding, separatorJPanel.getY() - padding * 2
 				- cHeight, cWidth, cHeight);
 
 		// 歌词面板
@@ -194,21 +194,21 @@ public class TrayDialog extends JDialog implements Observer {
 		JPanel separatorJPanel2 = new JPanel();
 		separatorJPanel2.setBackground(new Color(207, 207, 207));
 		separatorJPanel2.setBounds(padding * 2, trayLrcPanel.getY() - 1
-				- padding, cWidth - padding * 2, 1);
+				- padding * 2, cWidth - padding * 2, 1);
 
 		//
 		songTitleLabel = new JLabel("", JLabel.CENTER);
 		songTitleLabel.setForeground(new Color(102, 102, 102));
 		Font font = FontsUtil.getBaseFont(cHeight / 2 + 2);
 		songTitleLabel.setFont(font);
-		songTitleLabel.setBounds(padding, separatorJPanel2.getY() - padding
+		songTitleLabel.setBounds(padding, separatorJPanel2.getY() - padding * 2
 				- cHeight, cWidth, cHeight);
 
 		//
 		JPanel oPanel = new JPanel();
 		oPanel.setOpaque(false);
-		oPanel.setBounds(padding, songTitleLabel.getY() - padding - cHeight,
-				cWidth, cHeight);
+		oPanel.setBounds(padding,
+				songTitleLabel.getY() - padding * 2 - cHeight, cWidth, cHeight);
 		// 初始化操作面板控件
 		initOPanelComponent(oPanel, cHeight);
 
