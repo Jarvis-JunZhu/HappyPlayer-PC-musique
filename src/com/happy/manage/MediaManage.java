@@ -212,6 +212,12 @@ public class MediaManage implements Observer {
 						}
 						stopToPlay();
 						preMusic(Constants.playModel);
+					} else if (songMessage.getType() == SongMessage.REINITMUSIC) {
+						if (songInfo == null) {
+							return;
+						}
+						//重新播放歌曲
+						playInfoMusic(songInfo, true);
 					}
 				}
 			}
@@ -262,6 +268,9 @@ public class MediaManage implements Observer {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+
+				// 设置当前的歌曲id
+				Constants.playInfoID = songInfo.getSid();
 
 				playStatus = PLAYING;
 
@@ -405,9 +414,6 @@ public class MediaManage implements Observer {
 			stopToPlay();
 			return;
 		}
-
-		// 保存歌曲索引
-		Constants.playInfoID = songInfo.getSid();
 
 		EventIntent eventIntent = new EventIntent();
 		eventIntent.setType(EventIntent.SONGLIST);

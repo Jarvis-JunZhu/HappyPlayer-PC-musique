@@ -29,7 +29,6 @@ import com.happy.observable.ObserverManage;
 import com.happy.widget.button.BaseButton;
 import com.happy.widget.panel.ScrollBarUI;
 import com.happy.widget.panel.SkinListPanel;
-import com.happy.widget.panel.TitleBackGroundPanel;
 import com.happy.widget.slider.TranSlider;
 
 /**
@@ -129,17 +128,13 @@ public class SkinDialog extends JDialog implements Observer {
 			}
 		});
 		titlePanel.setLayout(null);
-		TitleBackGroundPanel titleBackGroundPanel = new TitleBackGroundPanel(
-				width, titleHeight);
-		titleBackGroundPanel.setBounds(0, 0, width, titleHeight);
-
+		
 		JLabel titleJLabel = new JLabel("皮肤窗口");
 		titleJLabel.setForeground(Color.white);
 		titleJLabel.setBounds(10, 0, width / 3, titleHeight);
 
 		titlePanel.add(titleJLabel);
 		titlePanel.add(closeButton);
-		titlePanel.add(titleBackGroundPanel);
 		titlePanel.setOpaque(false);
 
 		JPanel buttomPanel = new JPanel();

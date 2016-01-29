@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
@@ -260,6 +261,15 @@ public class MainLrcOperatePanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (Constants.playInfoID.equals("")) {
+					JOptionPane.showMessageDialog(null, "请选择歌曲", "提示",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					anHide();
+					MessageIntent messageIntent = new MessageIntent();
+					messageIntent.setAction(MessageIntent.OPEN_MAKELRCDIALOG);
+					ObserverManage.getObserver().setMessage(messageIntent);
+				}
 			}
 		});
 		this.add(makeLrcButton);

@@ -17,6 +17,7 @@ public class SongMessage {
 	public static final int UPDATEMUSIC = (i++); // 更新音乐内容
 
 	public static final int INITMUSIC = (i++); // 初始化歌曲操作
+	public static final int REINITMUSIC = (i++); // 重新播放歌曲
 	public static final int PREMUSIC = (i++); // 上一首歌曲操作
 	public static final int PLAYMUSIC = (i++); // 播放歌曲操作
 	public static final int PLAYINFOMUSIC = (i++); // 播放歌曲

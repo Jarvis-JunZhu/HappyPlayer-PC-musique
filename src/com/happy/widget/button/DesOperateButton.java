@@ -37,11 +37,49 @@ public class DesOperateButton extends JButton implements Observer {
 
 	private DesOperatePanel desOperatePanel;
 
+	private boolean isHide = false;
+
 	public DesOperateButton(String baseIconPath, String overIconPath,
 			String pressedIconPath, int width, int height,
 			MouseInputListener desLrcDialogMouseListener,
 			DesOperatePanel desOperatePanel) {
 
+		ImageIcon icon = new ImageIcon(baseIconPath);
+		icon.setImage(icon.getImage().getScaledInstance(width, height,
+				Image.SCALE_SMOOTH));
+		this.setIcon(icon);
+
+		ImageIcon rolloverIcon = new ImageIcon(overIconPath);
+		rolloverIcon.setImage(rolloverIcon.getImage().getScaledInstance(width,
+				height, Image.SCALE_SMOOTH));
+		this.setRolloverIcon(rolloverIcon);
+
+		ImageIcon pressedIcon = new ImageIcon(pressedIconPath);
+		pressedIcon.setImage(pressedIcon.getImage().getScaledInstance(width,
+				height, Image.SCALE_SMOOTH));
+		this.setPressedIcon(pressedIcon);
+		this.setBorderPainted(false);
+		this.setFocusPainted(false);
+		this.setContentAreaFilled(false);
+		this.setDoubleBuffered(false);
+		this.setOpaque(false);
+		this.setFocusable(false);
+		// 设置鼠标的图标
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+		this.desLrcDialogMouseListener = desLrcDialogMouseListener;
+		this.desOperatePanel = desOperatePanel;
+
+		initLockEvent();
+		ObserverManage.getObserver().addObserver(this);
+	}
+
+	public DesOperateButton(String baseIconPath, String overIconPath,
+			String pressedIconPath, int width, int height,
+			MouseInputListener desLrcDialogMouseListener,
+			DesOperatePanel desOperatePanel, boolean isHide) {
+
+		this.isHide = isHide;
 		ImageIcon icon = new ImageIcon(baseIconPath);
 		icon.setImage(icon.getImage().getScaledInstance(width, height,
 				Image.SCALE_SMOOTH));
@@ -124,6 +162,10 @@ public class DesOperateButton extends JButton implements Observer {
 		public void mouseReleased(MouseEvent e) {
 			desLrcDialogMouseListener.mouseReleased(e);
 			// setCursor(null);
+			if (isHide) {
+				desOperatePanel.setEnter(false);
+				desLrcDialogMouseListener.mouseExited(e);
+			}
 		}
 
 		@Override

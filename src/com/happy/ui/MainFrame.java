@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 
 import com.happy.common.Constants;
 import com.happy.event.PanelMoveFrame;
+import com.happy.manage.MakeLrcDialogManage;
 import com.happy.model.MessageIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
@@ -340,6 +341,12 @@ public class MainFrame extends JFrame implements Observer {
 			} else if (messageIntent.getAction().equals(
 					MessageIntent.FRAME_CLOSE)) {
 				close();
+			} else if (messageIntent.getAction().equals(
+					MessageIntent.OPEN_MAKELRCDIALOG)) {
+				openMakeLrcDialog();
+			} else if (messageIntent.getAction().equals(
+					MessageIntent.CLOSE_MAKELRCDIALOG)) {
+				hideMakeLrcDialog();
 			}
 		} else if (data instanceof SongMessage) {
 			SongMessage songMessage = (SongMessage) data;
@@ -363,6 +370,27 @@ public class MainFrame extends JFrame implements Observer {
 	}
 
 	/**
+	 * 隐藏制作歌词窗口
+	 */
+	private void hideMakeLrcDialog() {
+		MakeLrcDialogManage.hideMakeLrcDialog();
+	}
+
+	/**
+	 * 打开制作歌词窗口
+	 */
+	private void openMakeLrcDialog() {
+		MakeLrcDialogManage.initMakeLrcDialog();
+
+		int x = this.getX()
+				+ (this.getWidth() - MakeLrcDialogManage.getWidth()) / 2;
+		int y = this.getY()
+				+ (this.getHeight() - MakeLrcDialogManage.getHeight()) / 2;
+
+		MakeLrcDialogManage.showMakeLrcDialog(x, y);
+	}
+
+	/**
 	 * 打开皮肤窗口
 	 */
 	private void onpenSkinDialog() {
@@ -382,13 +410,6 @@ public class MainFrame extends JFrame implements Observer {
 
 		if (Constants.showDesktopLyrics) {
 
-			// 如果桌面歌词已经锁定，则进行解锁
-			// if (Constants.desLrcIsLock) {
-			// Constants.desLrcIsLock = false;
-			// MessageIntent messageIntent = new MessageIntent();
-			// messageIntent.setAction(MessageIntent.LOCKDESLRC);
-			// ObserverManage.getObserver().setMessage(messageIntent);
-			// }
 			// 获取屏幕边界
 			Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(
 					this.getGraphicsConfiguration());

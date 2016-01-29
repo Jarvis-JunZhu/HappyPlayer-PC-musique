@@ -8,10 +8,12 @@ import java.io.InputStreamReader;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
 import com.happy.util.KscLyricsParserUtil;
+
 /**
  * 歌词处理类
+ * 
  * @author Administrator
- *
+ * 
  */
 public class KscLyricsManage {
 
@@ -99,5 +101,12 @@ public class KscLyricsManage {
 		songMessage.setSid(sid);
 		// 通知
 		ObserverManage.getObserver().setMessage(songMessage);
+	}
+
+	/**
+	 * 清空数据
+	 */
+	public static void clean() {
+		mKscLyricsParser = null;
 	}
 }

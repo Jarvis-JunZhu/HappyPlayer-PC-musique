@@ -121,6 +121,8 @@ public class PlayListPanel extends JPanel implements Observer {
 	 */
 	protected void initComponentData() {
 
+		boolean pidExists = false;
+
 		for (int i = 0; i < mCategorys.size(); i++) {
 			Category categorys = mCategorys.get(i);
 			String titleName = categorys.getmCategoryName();
@@ -141,6 +143,8 @@ public class PlayListPanel extends JPanel implements Observer {
 
 				if (songInfo.getSid().equals(Constants.playInfoID)) {
 
+					//
+					pidExists = true;
 					// 设置当前播放歌曲所在的播放列表索引
 					Constants.sDoubleClickIndex = j;
 					Constants.pDoubleClickIndex = i;
@@ -172,6 +176,10 @@ public class PlayListPanel extends JPanel implements Observer {
 
 			listViewPanel.add(itemPanel);
 
+		}
+
+		if (!pidExists) {
+			Constants.playInfoID = "";
 		}
 
 		// 没有播放的歌曲

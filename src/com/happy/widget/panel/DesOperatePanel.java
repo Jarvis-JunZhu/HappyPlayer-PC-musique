@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
@@ -337,13 +338,21 @@ public class DesOperatePanel extends JPanel implements Observer {
 		DesOperateButton makeLrcButton = new DesOperateButton(
 				makeLrcButtonBaseIconPath, makeLrcButtonOverIconPath,
 				makeLrcButtonPressedIconPath, buttonSize * 2, buttonSize,
-				mouseListener, this);
+				mouseListener, this, true);
 		makeLrcButton.setBounds(x, 0, buttonSize * 2, buttonSize);
 		makeLrcButton.setToolTipText("制作歌词");
 		makeLrcButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (Constants.playInfoID.equals("")) {
+					JOptionPane.showMessageDialog(null, "请选择歌曲", "提示",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					MessageIntent messageIntent = new MessageIntent();
+					messageIntent.setAction(MessageIntent.OPEN_MAKELRCDIALOG);
+					ObserverManage.getObserver().setMessage(messageIntent);
+				}
 			}
 		});
 
