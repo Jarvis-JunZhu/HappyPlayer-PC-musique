@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import com.happy.common.Constants;
+import com.sun.awt.AWTUtilities;
 
 public class SplashFrame extends JFrame {
 
@@ -27,6 +28,7 @@ public class SplashFrame extends JFrame {
 		init();
 		// 初始化组件
 		initComponent();
+		AWTUtilities.setWindowOpaque(this, false);// 关键代码！ 设置窗体透明
 	}
 
 	private void init() {
@@ -69,7 +71,7 @@ public class SplashFrame extends JFrame {
 	 */
 	private ImageIcon getBackgroundImageIcon() {
 		String backgroundPath = Constants.PATH_SPLASH + File.separator
-				+ "splash_bg.jpg";
+				+ "splash_bg.png";
 		ImageIcon background = new ImageIcon(backgroundPath);// 背景图片
 		background.setImage(background.getImage().getScaledInstance(
 				this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH));
