@@ -1,7 +1,9 @@
 package com.happy.widget.dialog;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -13,9 +15,8 @@ import javax.swing.JPanel;
 
 import com.happy.common.Constants;
 import com.happy.event.PanelMoveDialog;
-import com.happy.model.MessageIntent;
-import com.happy.observable.ObserverManage;
 import com.happy.widget.button.BaseButton;
+import com.happy.widget.button.DefButton;
 
 /**
  * 制作歌词窗口
@@ -45,6 +46,33 @@ public class MakeLrcDialog extends JDialog {
 	 * 背景图片
 	 */
 	private JLabel bgJLabel;
+	/**
+	 * 步骤图片
+	 */
+	private JLabel stepJLabel;
+
+	/**
+	 * 定义卡片布局对象
+	 */
+	private CardLayout card = new CardLayout();
+	/**
+	 * 卡片索引
+	 */
+	private int cardIndex = 1;
+	/**
+	 * 上一步
+	 */
+	private DefButton preButton;
+
+	/**
+	 * 下一步
+	 */
+	private DefButton nextButton;
+
+	/**
+	 * 完成
+	 */
+	private DefButton finishButton;
 
 	public MakeLrcDialog() {
 		// 设定禁用窗体装饰，这样就取消了默认的窗体结构
@@ -52,7 +80,7 @@ public class MakeLrcDialog extends JDialog {
 		this.setAlwaysOnTop(true);
 
 		width = Constants.mainFrameWidth / 4 * 3;
-		height = Constants.mainFrameHeight / 5 * 4;
+		height = Constants.mainFrameHeight / 5 * 4 + 10;
 
 		this.setSize(width, height);
 		this.setAlwaysOnTop(true);
@@ -65,9 +93,9 @@ public class MakeLrcDialog extends JDialog {
 
 		this.getContentPane().setLayout(null);
 
-		int titleHeight = height / 4 / 3;
+		int titleHeight = height / 4 / 3 - 10;
 
-		//标题面板
+		// 标题面板
 		JPanel titlePanel = new JPanel();
 		titlePanel.setBounds(0, 0, width, titleHeight);
 		new PanelMoveDialog(this, titlePanel);
@@ -89,30 +117,171 @@ public class MakeLrcDialog extends JDialog {
 		closeButton.setToolTipText("关闭");
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MessageIntent messageIntent = new MessageIntent();
-				messageIntent.setAction(MessageIntent.CLOSE_MAKELRCDIALOG);
-				ObserverManage.getObserver().setMessage(messageIntent);
+				dispose();
+				// MessageIntent messageIntent = new MessageIntent();
+				// messageIntent.setAction(MessageIntent.CLOSE_MAKELRCDIALOG);
+				// ObserverManage.getObserver().setMessage(messageIntent);
 			}
 		});
 
 		titlePanel.setLayout(null);
-
-		JLabel titleJLabel = new JLabel("制作歌词窗口");
+		// 标题
+		JLabel titleJLabel = new JLabel("制作歌词");
 		titleJLabel.setForeground(Color.white);
-		titleJLabel.setBounds(10, 0, width / 3, titleHeight);
+		titleJLabel.setBounds(10, 0, width / 4, titleHeight);
 
 		titlePanel.add(titleJLabel);
 		titlePanel.add(closeButton);
 		titlePanel.setOpaque(false);
 
-		//内容面板
+		// 内容面板
 		JPanel comPanel = new JPanel();
 		comPanel.setBackground(Color.white);
-		comPanel.setBounds(2, titleHeight, width - 2 * 2, height - titleHeight
-				- 2);
+		comPanel.setBounds(1, titleHeight, width - 1 * 2, height - titleHeight
+				- 1);
+		// 高度
+		int lH = titleHeight + 10;
+		// 步骤图片
+		stepJLabel = new JLabel();
+		stepJLabel.setBounds(rightPad * 2, 0, width - rightPad * 4, lH);
+		initStepPic(cardIndex);
+		//
+		final Panel cardPanel = new Panel();
+		// 设置cardPanel面板对象为卡片布局
+		cardPanel.setLayout(card);
+		cardPanel.setBounds(rightPad,
+				stepJLabel.getY() + stepJLabel.getHeight() + rightPad / 2,
+				width - rightPad * 2, comPanel.getHeight() - lH * 2 - rightPad);
+		//
+		JPanel panel1 = new JPanel();
+		panel1.setBackground(Color.black);
+
+		JPanel panel2 = new JPanel();
+		panel2.setBackground(Color.red);
+
+		JPanel panel3 = new JPanel();
+		panel3.setBackground(Color.blue);
+
+		cardPanel.add(panel1, "1");
+		cardPanel.add(panel2, "2");
+		cardPanel.add(panel3, "3");
+
+		// 底部面板
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setBounds(rightPad,
+				cardPanel.getY() + cardPanel.getHeight(), width - rightPad * 2,
+				lH);
+		bottomPanel.setOpaque(false);
+		//
+		int bHSize = bottomPanel.getHeight() / 2;
+		int bWSize = bHSize * 3;
+		int y = (bottomPanel.getHeight() - bHSize) / 2;
+
+		// 取消按钮
+		DefButton chanelButton = new DefButton(bWSize, bHSize);
+		chanelButton.setText("取消");
+		chanelButton.setBounds(bottomPanel.getWidth() - rightPad - bWSize, y,
+				bWSize, bHSize);
+		chanelButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		//
+		nextButton = new DefButton(bWSize, bHSize);
+		nextButton.setText("下一步");
+		nextButton.setBounds(chanelButton.getX() - rightPad - bWSize, y,
+				bWSize, bHSize);
+		nextButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardIndex++;
+				if (cardIndex > 3)
+					cardIndex = 3;
+				initBottomUI();
+				card.next(cardPanel);
+			}
+		});
+		//
+		preButton = new DefButton(bWSize, bHSize);
+		preButton.setText("上一步");
+		preButton.setBounds(nextButton.getX() - rightPad - bWSize, y, bWSize,
+				bHSize);
+		preButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cardIndex--;
+				if (cardIndex <= 0)
+					cardIndex = 1;
+				initBottomUI();
+				card.previous(cardPanel);
+			}
+		});
+
+		finishButton = new DefButton(bWSize, bHSize);
+		finishButton.setText("保存");
+		finishButton.setBounds(chanelButton.getX() - rightPad - bWSize, y,
+				bWSize, bHSize);
+		finishButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+		//
+		bottomPanel.setLayout(null);
+		bottomPanel.add(chanelButton);
+		bottomPanel.add(nextButton);
+		bottomPanel.add(preButton);
+		bottomPanel.add(finishButton);
+		//
+		// 初始化底部ui
+		initBottomUI();
+		//
+
+		comPanel.setLayout(null);
+		comPanel.add(stepJLabel);
+		comPanel.add(cardPanel);
+		comPanel.add(bottomPanel);
 
 		this.getContentPane().add(titlePanel);
 		this.getContentPane().add(comPanel);
+	}
+
+	/**
+	 * 初始化底部菜单
+	 */
+	private void initBottomUI() {
+		if (cardIndex == 1) {
+			preButton.setVisible(false);
+		} else {
+			preButton.setVisible(true);
+		}
+		if (cardIndex == 3) {
+			finishButton.setVisible(true);
+			nextButton.setVisible(false);
+		} else {
+			finishButton.setVisible(false);
+			nextButton.setVisible(true);
+		}
+		initStepPic(cardIndex);
+	}
+
+	/**
+	 * 初始化图片
+	 * 
+	 * @param i
+	 */
+	private void initStepPic(int i) {
+		String backgroundPath = Constants.PATH_ICON + File.separator + "step_"
+				+ i + ".png";
+		ImageIcon background = new ImageIcon(backgroundPath);// 背景图片
+		stepJLabel.setIcon(background);
 	}
 
 	/**

@@ -129,7 +129,7 @@ public class SkinDialog extends JDialog implements Observer {
 		});
 		titlePanel.setLayout(null);
 		
-		JLabel titleJLabel = new JLabel("皮肤窗口");
+		JLabel titleJLabel = new JLabel("皮肤");
 		titleJLabel.setForeground(Color.white);
 		titleJLabel.setBounds(10, 0, width / 3, titleHeight);
 
