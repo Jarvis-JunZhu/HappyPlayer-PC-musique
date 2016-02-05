@@ -74,7 +74,8 @@ public class DesLrcDialog extends JDialog implements Observer {
 		this.setAlwaysOnTop(true);
 		AWTUtilities.setWindowOpaque(this, false);// 关键代码！ 设置窗体透明
 
-		initLockEvent();
+		this.addMouseListener(desLrcDialogMouseListener);
+		this.addMouseMotionListener(desLrcDialogMouseListener);
 		ObserverManage.getObserver().addObserver(this);
 	}
 
@@ -134,13 +135,9 @@ public class DesLrcDialog extends JDialog implements Observer {
 	/**
 	 * 初始化桌面歌词锁事件
 	 */
-	private void initLockEvent() {
+	private void initLock() {
 		if (!Constants.desLrcIsLock) {
-			this.addMouseListener(desLrcDialogMouseListener);
-			this.addMouseMotionListener(desLrcDialogMouseListener);
 		} else {
-			this.removeMouseListener(desLrcDialogMouseListener);
-			this.removeMouseMotionListener(desLrcDialogMouseListener);
 			desOperatePanel.setVisible(false);
 			floatLyricsView.setShow(false);
 		}
@@ -257,7 +254,7 @@ public class DesLrcDialog extends JDialog implements Observer {
 					MessageIntent messageIntent = (MessageIntent) data;
 					if (messageIntent.getAction().equals(
 							MessageIntent.LOCKDESLRC)) {
-						initLockEvent();
+						initLock();
 					}
 				}
 			}

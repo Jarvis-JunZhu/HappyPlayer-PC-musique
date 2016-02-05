@@ -253,6 +253,7 @@ public class OperatePanel extends JPanel implements Observer {
 						/ songSlider.getWidth();
 
 				String tip = "歌曲进度";
+
 				if (songSlider.getMaximum() != 0)
 					tip = MediaUtils.formatTime(progress);
 
@@ -261,8 +262,9 @@ public class OperatePanel extends JPanel implements Observer {
 
 				songProgressTipDialog.getTipPanel().setTipString(tip);
 
-				songProgressTipDialog.setSize(new Dimension(
-						songProgressTipDialog.getTipPanel().getTextWidth() + 8,
+				int dWidth = songProgressTipDialog.getTipPanel().getTextWidth() + 8;
+				// System.out.println(tip + "   dWidth = " + dWidth);
+				songProgressTipDialog.setSize(new Dimension(dWidth,
 						Constants.APPFONTSIZE + 8));
 				int x = e.getXOnScreen();
 				int y = songSlider.getLocationOnScreen().y
@@ -891,6 +893,7 @@ public class OperatePanel extends JPanel implements Observer {
 					|| songMessage.getType() == SongMessage.SERVICEPLAYMUSIC
 					|| songMessage.getType() == SongMessage.SERVICEPLAYINGMUSIC
 					|| songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
+					|| songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC
 					|| songMessage.getType() == SongMessage.ERRORMUSIC
 					|| songMessage.getType() == SongMessage.SERVICEERRORMUSIC) {
 				refreshUI(songMessage);
@@ -957,7 +960,8 @@ public class OperatePanel extends JPanel implements Observer {
 							.formatTime((int) mSongInfo.getPlayProgress()));
 				}
 
-			} else if (songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC) {
+			} else if (songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
+					|| songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC) {
 				playButton.setVisible(true);
 				pauseButton.setVisible(false);
 

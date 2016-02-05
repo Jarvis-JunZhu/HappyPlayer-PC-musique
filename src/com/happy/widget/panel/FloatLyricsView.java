@@ -489,33 +489,40 @@ public class FloatLyricsView extends JPanel implements Observer {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			desLrcDialogMouseListener.mouseClicked(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseClicked(e);
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			desLrcDialogMouseListener.mousePressed(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mousePressed(e);
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			desLrcDialogMouseListener.mouseReleased(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseReleased(e);
 			// setCursor(null);
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			isEnter = true;
-			repaint();
+			if (!Constants.desLrcIsLock) {
+				isEnter = true;
+				repaint();
 
-			desLrcDialogMouseListener.mouseEntered(e);
+				desLrcDialogMouseListener.mouseEntered(e);
+			}
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			isEnter = false;
-			repaint();
-			desLrcDialogMouseListener.mouseExited(e);
+			if (!Constants.desLrcIsLock) {
+				isEnter = false;
+				repaint();
+				desLrcDialogMouseListener.mouseExited(e);
+			}
 		}
 
 		@Override
@@ -524,12 +531,14 @@ public class FloatLyricsView extends JPanel implements Observer {
 			// if (e.getModifiers() == MouseEvent.BUTTON1_MASK) {
 			// setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			// }
-			desLrcDialogMouseListener.mouseDragged(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseDragged(e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			desLrcDialogMouseListener.mouseMoved(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseMoved(e);
 		}
 
 	}
@@ -590,9 +599,6 @@ public class FloatLyricsView extends JPanel implements Observer {
 						initSizeWord();
 						showLrc(progress);
 						repaint();
-					} else if (messageIntent.getAction().equals(
-							MessageIntent.LOCKDESLRC)) {
-						initLockEvent();
 					}
 				}
 			}
@@ -600,12 +606,7 @@ public class FloatLyricsView extends JPanel implements Observer {
 	}
 
 	protected void initLockEvent() {
-		if (!Constants.desLrcIsLock) {
-			this.addMouseListener(mouseListener);
-			this.addMouseMotionListener(mouseListener);
-		} else {
-			this.removeMouseListener(mouseListener);
-			this.removeMouseMotionListener(mouseListener);
-		}
+		this.addMouseListener(mouseListener);
+		this.addMouseMotionListener(mouseListener);
 	}
 }

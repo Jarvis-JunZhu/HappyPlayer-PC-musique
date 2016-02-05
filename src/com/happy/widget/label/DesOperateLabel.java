@@ -65,13 +65,8 @@ public class DesOperateLabel extends JLabel implements Observer {
 	}
 
 	private void initLockEvent() {
-		if (!Constants.desLrcIsLock) {
-			this.addMouseListener(mouseListener);
-			this.addMouseMotionListener(mouseListener);
-		} else {
-			this.removeMouseListener(mouseListener);
-			this.removeMouseMotionListener(mouseListener);
-		}
+		this.addMouseListener(mouseListener);
+		this.addMouseMotionListener(mouseListener);
 
 	}
 
@@ -79,40 +74,49 @@ public class DesOperateLabel extends JLabel implements Observer {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			desLrcDialogMouseListener.mouseClicked(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseClicked(e);
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			desLrcDialogMouseListener.mousePressed(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mousePressed(e);
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			desLrcDialogMouseListener.mouseReleased(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseReleased(e);
 			// setCursor(null);
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			desOperatePanel.setEnter(true);
-			desLrcDialogMouseListener.mouseEntered(e);
+			if (!Constants.desLrcIsLock) {
+				desOperatePanel.setEnter(true);
+				desLrcDialogMouseListener.mouseEntered(e);
+			}
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			desOperatePanel.setEnter(false);
-			desLrcDialogMouseListener.mouseExited(e);
+			if (!Constants.desLrcIsLock) {
+				desOperatePanel.setEnter(false);
+				desLrcDialogMouseListener.mouseExited(e);
+			}
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			desLrcDialogMouseListener.mouseDragged(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseDragged(e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			desLrcDialogMouseListener.mouseMoved(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseMoved(e);
 		}
 
 	}
@@ -124,9 +128,6 @@ public class DesOperateLabel extends JLabel implements Observer {
 				if (data instanceof MessageIntent) {
 					MessageIntent messageIntent = (MessageIntent) data;
 					if (messageIntent.getAction().equals(
-							MessageIntent.LOCKDESLRC)) {
-						initLockEvent();
-					} else if (messageIntent.getAction().equals(
 							MessageIntent.UPDATE_SKIN)) {
 						initSkin();
 					}

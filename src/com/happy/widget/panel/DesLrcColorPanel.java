@@ -3,16 +3,11 @@ package com.happy.widget.panel;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import com.happy.common.Constants;
-import com.happy.model.MessageIntent;
-import com.happy.observable.ObserverManage;
 import com.happy.widget.panel.DesLrcColorParentPanel.DesLrcEvent;
 
 /**
@@ -21,7 +16,7 @@ import com.happy.widget.panel.DesLrcColorParentPanel.DesLrcEvent;
  * @author Administrator
  * 
  */
-public class DesLrcColorPanel extends JPanel implements Observer {
+public class DesLrcColorPanel extends JPanel {
 
 	/**
 	 * 
@@ -79,79 +74,67 @@ public class DesLrcColorPanel extends JPanel implements Observer {
 		this.setBackground(color);
 
 		initLockEvent();
-		ObserverManage.getObserver().addObserver(this);
 	}
 
 	private void initLockEvent() {
-		if (!Constants.desLrcIsLock) {
-			this.addMouseListener(mouseListener);
-			this.addMouseMotionListener(mouseListener);
-		} else {
-			this.removeMouseListener(mouseListener);
-			this.removeMouseMotionListener(mouseListener);
-		}
-
+		this.addMouseListener(mouseListener);
+		this.addMouseMotionListener(mouseListener);
 	}
 
 	private class MouseListener implements MouseInputListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			desLrcDialogMouseListener.mouseClicked(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseClicked(e);
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			desLrcDialogMouseListener.mousePressed(e);
-			if (desLrcEvent != null) {
-				desLrcEvent.select(colorIndex);
+			if (!Constants.desLrcIsLock) {
+				desLrcDialogMouseListener.mousePressed(e);
+				if (desLrcEvent != null) {
+					desLrcEvent.select(colorIndex);
+				}
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			desLrcDialogMouseListener.mouseReleased(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseReleased(e);
 			// setCursor(null);
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			desOperatePanel.setEnter(true);
-			desLrcDialogMouseListener.mouseEntered(e);
+			if (!Constants.desLrcIsLock) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				desOperatePanel.setEnter(true);
+				desLrcDialogMouseListener.mouseEntered(e);
+			}
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			setCursor(null);
-			desOperatePanel.setEnter(false);
-			desLrcDialogMouseListener.mouseExited(e);
+			if (!Constants.desLrcIsLock) {
+				setCursor(null);
+				desOperatePanel.setEnter(false);
+				desLrcDialogMouseListener.mouseExited(e);
+			}
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			desLrcDialogMouseListener.mouseDragged(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseDragged(e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			desLrcDialogMouseListener.mouseMoved(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseMoved(e);
 		}
 
-	}
-
-	@Override
-	public void update(Observable o, final Object data) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (data instanceof MessageIntent) {
-					MessageIntent messageIntent = (MessageIntent) data;
-					if (messageIntent.getAction().equals(
-							MessageIntent.LOCKDESLRC)) {
-						initLockEvent();
-					}
-				}
-			}
-		});
 	}
 }

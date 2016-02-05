@@ -38,7 +38,7 @@ public class ToolTipPanel extends JPanel {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		// 以达到边缘平滑的效果
 
@@ -76,6 +76,11 @@ public class ToolTipPanel extends JPanel {
 	}
 
 	public int getTextWidth() {
+		if (textWidth == 0) {
+			FontMetrics fm = getFontMetrics(FontsUtil
+					.getBaseFont(Constants.APPFONTSIZE));
+			textWidth = (int) fm.stringWidth(tipString);
+		}
 		return textWidth;
 	}
 

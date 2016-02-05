@@ -320,4 +320,9 @@ public class Constants {
 		int year = cal.get(Calendar.YEAR);
 		return year + "";
 	}
+
+	/**
+	 * 制作歌词窗口是否打开
+	 */
+	public static boolean makeLrcDialogIsShow = false;
 }

@@ -90,6 +90,7 @@ public class MainLrcPanel extends JPanel implements Observer {
 			if (songMessage.getType() == SongMessage.INITMUSIC
 					|| songMessage.getType() == SongMessage.SERVICEPLAYINGMUSIC
 					|| songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
+					|| songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC
 					|| songMessage.getType() == SongMessage.ERRORMUSIC
 					|| songMessage.getType() == SongMessage.SERVICEERRORMUSIC) {
 				refreshUI(songMessage);
@@ -153,7 +154,8 @@ public class MainLrcPanel extends JPanel implements Observer {
 							(int) mSongInfo.getPlayProgress());
 				}
 
-			} else if (songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC) {
+			} else if (songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
+					|| songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC) {
 
 				if (kscManyLineLyricsView.getHasKsc()
 						&& !kscManyLineLyricsView.getBlScroll()) {

@@ -75,7 +75,9 @@ public class TrayDialog extends JDialog implements Observer {
 			MessageIntent messageIntent = new MessageIntent();
 			messageIntent.setAction(MessageIntent.LOCKDESLRC);
 			ObserverManage.getObserver().setMessage(messageIntent);
-			// setVisible(false);
+			if (!Constants.desLrcIsLock) {
+				setVisible(false);
+			}
 		}
 
 		@Override

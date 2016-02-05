@@ -167,6 +167,9 @@ public class MainFrame extends JFrame implements Observer {
 					public void mouseClicked(MouseEvent e) {
 						// 右键
 						if (e.getButton() == MouseEvent.BUTTON3) {
+							if (Constants.makeLrcDialogIsShow) {
+								return;
+							}
 							if (trayFrame != null) {
 								trayFrame.setVisible(false);
 								trayFrame.dispose();

@@ -216,12 +216,36 @@ public class MediaManage implements Observer {
 						if (songInfo == null) {
 							return;
 						}
-						//重新播放歌曲
+						// 重新播放歌曲
 						playInfoMusic(songInfo, true);
+					} else if (songMessage.getType() == SongMessage.STOPMUSIC) {
+						if (songInfo == null) {
+							return;
+						}
+						stopMusic();
+					} else if (songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC) {
+						playStatus = PAUSE;
+						if (songInfo != null
+								&& songMessage.getSongInfo() != null) {
+							// 相同，则更新进度
+							if (songInfo.getSid().equals(
+									songMessage.getSongInfo().getSid())) {
+								songInfo = songMessage.getSongInfo();
+							}
+						}
 					}
 				}
 			}
 		});
+	}
+
+	/**
+	 * 结束音乐播放
+	 */
+	protected void stopMusic() {
+		SongMessage msg = new SongMessage();
+		msg.setType(SongMessage.SERVICESTOPMUSIC);
+		ObserverManage.getObserver().setMessage(msg);
 	}
 
 	/**

@@ -91,6 +91,8 @@ public class MediaPlayerService implements Observer {
 					} else if (songMessage.getType() == SongMessage.SERVICESEEKTOMUSIC) {
 						int progress = songMessage.getProgress();
 						seekTo(progress);
+					} else if (songMessage.getType() == SongMessage.SERVICESTOPMUSIC) {
+						stopMusic();
 					}
 				} else if (data instanceof MessageIntent) {
 					MessageIntent messageIntent = (MessageIntent) data;
@@ -101,6 +103,30 @@ public class MediaPlayerService implements Observer {
 				}
 			}
 		});
+	}
+
+	/**
+	 * 停止音乐
+	 */
+	protected void stopMusic() {
+		try {
+			if (mediaPlayer != null) {
+				mediaPlayer.pause();
+				mediaPlayer = null;
+			}
+			if (lrcThread != null) {
+				lrcThread = null;
+			}
+			if (songInfo != null) {
+				SongMessage msg = new SongMessage();
+				songInfo.setPlayProgress(0);
+				msg.setSongInfo(songInfo);
+				msg.setType(SongMessage.SERVICESTOPEDMUSIC);
+				ObserverManage.getObserver().setMessage(msg);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -221,11 +247,20 @@ public class MediaPlayerService implements Observer {
 					@Override
 					public void onEvent(PlayerEvent e) {
 						if (e.getEventCode() == PlayerEventCode.STOPPED) {
-							// 播放结束，播放下一首
-							SongMessage songMessage = new SongMessage();
-							songMessage.setType(SongMessage.NEXTMUSIC);
-							ObserverManage.getObserver()
-									.setMessage(songMessage);
+							if (!Constants.makeLrcDialogIsShow) {
+								// 播放结束，播放下一首
+								SongMessage songMessage = new SongMessage();
+								songMessage.setType(SongMessage.NEXTMUSIC);
+								ObserverManage.getObserver().setMessage(
+										songMessage);
+							} else {
+								// 停止播放歌曲
+								SongMessage songMessage = new SongMessage();
+								songMessage.setType(SongMessage.STOPMUSIC);
+								// 通知
+								ObserverManage.getObserver().setMessage(
+										songMessage);
+							}
 						} else if (e.getEventCode() == PlayerEventCode.SEEK_FINISHED) {
 							if (mediaPlayer != null) {
 								// 获取快进后的播放进度

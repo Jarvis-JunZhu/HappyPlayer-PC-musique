@@ -4,12 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import com.happy.common.Constants;
@@ -26,7 +23,7 @@ import com.happy.widget.panel.DesLrcColorParentPanel.DesLrcEvent;
  * @author zhangliangming
  * 
  */
-public class DesOperatePanel extends JPanel implements Observer {
+public class DesOperatePanel extends JPanel   {
 
 	/**
 	 * 
@@ -90,17 +87,14 @@ public class DesOperatePanel extends JPanel implements Observer {
 		// 初始化组件
 		initComponent();
 		initLockEvent();
-		ObserverManage.getObserver().addObserver(this);
+	
 	}
 
 	private void initLockEvent() {
-		if (!Constants.desLrcIsLock) {
+		
 			this.addMouseListener(mouseListener);
 			this.addMouseMotionListener(mouseListener);
-		} else {
-			this.removeMouseListener(mouseListener);
-			this.removeMouseMotionListener(mouseListener);
-		}
+		
 
 	}
 
@@ -458,33 +452,40 @@ public class DesOperatePanel extends JPanel implements Observer {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			desLrcDialogMouseListener.mouseClicked(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseClicked(e);
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			desLrcDialogMouseListener.mousePressed(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mousePressed(e);
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			desLrcDialogMouseListener.mouseReleased(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseReleased(e);
 			// setCursor(null);
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			isEnter = true;
-			// repaint();
+			if (!Constants.desLrcIsLock) {
+				isEnter = true;
+				// repaint();
 
-			desLrcDialogMouseListener.mouseEntered(e);
+				desLrcDialogMouseListener.mouseEntered(e);
+			}
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			isEnter = false;
-			// repaint();
-			desLrcDialogMouseListener.mouseExited(e);
+			if (!Constants.desLrcIsLock) {
+				isEnter = false;
+				// repaint();
+				desLrcDialogMouseListener.mouseExited(e);
+			}
 		}
 
 		@Override
@@ -493,28 +494,15 @@ public class DesOperatePanel extends JPanel implements Observer {
 			// if (e.getModifiers() == MouseEvent.BUTTON1_MASK) {
 			// setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 			// }
-			desLrcDialogMouseListener.mouseDragged(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseDragged(e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			desLrcDialogMouseListener.mouseMoved(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseMoved(e);
 		}
 
-	}
-
-	@Override
-	public void update(Observable o, final Object data) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (data instanceof MessageIntent) {
-					MessageIntent messageIntent = (MessageIntent) data;
-					if (messageIntent.getAction().equals(
-							MessageIntent.LOCKDESLRC)) {
-						initLockEvent();
-					}
-				}
-			}
-		});
 	}
 }

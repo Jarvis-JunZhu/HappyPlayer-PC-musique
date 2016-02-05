@@ -11,12 +11,20 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.happy.common.Constants;
 import com.happy.event.PanelMoveDialog;
+import com.happy.manage.MediaManage;
+import com.happy.model.SongInfo;
+import com.happy.model.SongMessage;
+import com.happy.observable.ObserverManage;
 import com.happy.widget.button.BaseButton;
 import com.happy.widget.button.DefButton;
+import com.happy.widget.panel.MakeLrcLvRuPanel;
+import com.happy.widget.panel.MakeLrcZhiZuoPanel;
 
 /**
  * 制作歌词窗口
@@ -73,6 +81,14 @@ public class MakeLrcDialog extends JDialog {
 	 * 完成
 	 */
 	private DefButton finishButton;
+	/**
+	 * 录入面板
+	 */
+	private MakeLrcLvRuPanel makeLrcLvRuPanel;
+	/**
+	 * 歌词制作面板
+	 */
+	private MakeLrcZhiZuoPanel makeLrcZhiZuoPanel;
 
 	public MakeLrcDialog() {
 		// 设定禁用窗体装饰，这样就取消了默认的窗体结构
@@ -87,6 +103,21 @@ public class MakeLrcDialog extends JDialog {
 		this.setModal(true);
 		initComponent();
 		initSkin();
+		Constants.makeLrcDialogIsShow = true;
+		loadData();
+	}
+
+	/**
+	 * 加载数据
+	 */
+	private void loadData() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				SongInfo songInfo = MediaManage.getMediaManage().getSongInfo();
+				makeLrcLvRuPanel.initData(songInfo);
+				makeLrcZhiZuoPanel.initData(songInfo);
+			}
+		});
 	}
 
 	private void initComponent() {
@@ -117,10 +148,7 @@ public class MakeLrcDialog extends JDialog {
 		closeButton.setToolTipText("关闭");
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
-				// MessageIntent messageIntent = new MessageIntent();
-				// messageIntent.setAction(MessageIntent.CLOSE_MAKELRCDIALOG);
-				// ObserverManage.getObserver().setMessage(messageIntent);
+				close();
 			}
 		});
 
@@ -143,28 +171,19 @@ public class MakeLrcDialog extends JDialog {
 		int lH = titleHeight + 10;
 		// 步骤图片
 		stepJLabel = new JLabel();
-		stepJLabel.setBounds(rightPad * 2, 0, width - rightPad * 4, lH);
+		stepJLabel.setBounds(rightPad * 2, rightPad / 2, width - rightPad * 4,
+				lH);
 		initStepPic(cardIndex);
 		//
 		final Panel cardPanel = new Panel();
 		// 设置cardPanel面板对象为卡片布局
 		cardPanel.setLayout(card);
+
+		int wC = width - rightPad * 2;
+		int hC = comPanel.getHeight() - lH * 2 - rightPad;
 		cardPanel.setBounds(rightPad,
-				stepJLabel.getY() + stepJLabel.getHeight() + rightPad / 2,
-				width - rightPad * 2, comPanel.getHeight() - lH * 2 - rightPad);
-		//
-		JPanel panel1 = new JPanel();
-		panel1.setBackground(Color.black);
-
-		JPanel panel2 = new JPanel();
-		panel2.setBackground(Color.red);
-
-		JPanel panel3 = new JPanel();
-		panel3.setBackground(Color.blue);
-
-		cardPanel.add(panel1, "1");
-		cardPanel.add(panel2, "2");
-		cardPanel.add(panel3, "3");
+				stepJLabel.getY() + stepJLabel.getHeight() + rightPad / 2, wC,
+				hC);
 
 		// 底部面板
 		JPanel bottomPanel = new JPanel();
@@ -174,8 +193,22 @@ public class MakeLrcDialog extends JDialog {
 		bottomPanel.setOpaque(false);
 		//
 		int bHSize = bottomPanel.getHeight() / 2;
-		int bWSize = bHSize * 3;
+		int bWSize = bHSize * 4;
+		int oBWSize = bHSize * 3;
 		int y = (bottomPanel.getHeight() - bHSize) / 2;
+
+		//
+		makeLrcLvRuPanel = new MakeLrcLvRuPanel(wC, hC, oBWSize, bHSize);
+
+		makeLrcZhiZuoPanel = new MakeLrcZhiZuoPanel(wC, hC, bHSize,
+				makeLrcLvRuPanel);
+
+		JPanel panel3 = new JPanel();
+		panel3.setBackground(Color.blue);
+
+		cardPanel.add(makeLrcLvRuPanel, "lvru");
+		cardPanel.add(makeLrcZhiZuoPanel, "zhizuo");
+		cardPanel.add(panel3, "3");
 
 		// 取消按钮
 		DefButton chanelButton = new DefButton(bWSize, bHSize);
@@ -186,7 +219,7 @@ public class MakeLrcDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				close();
 			}
 		});
 		//
@@ -201,8 +234,27 @@ public class MakeLrcDialog extends JDialog {
 				cardIndex++;
 				if (cardIndex > 3)
 					cardIndex = 3;
-				initBottomUI();
-				card.next(cardPanel);
+				if (cardIndex == 2) {
+					String lrcComText = makeLrcLvRuPanel.getLrcComTextArea()
+							.getText();
+					if (lrcComText == null || lrcComText.equals("")) {
+						cardIndex--;
+						JOptionPane.showMessageDialog(null, "歌词内容不能为空", "提示",
+								JOptionPane.WARNING_MESSAGE);
+					} else {
+
+						SongMessage songMessage = new SongMessage();
+						songMessage.setType(SongMessage.STOPMUSIC);
+						// 通知
+						ObserverManage.getObserver().setMessage(songMessage);
+
+						initBottomUI();
+						card.next(cardPanel);
+					}
+				} else {
+					initBottomUI();
+					card.next(cardPanel);
+				}
 			}
 		});
 		//
@@ -217,6 +269,13 @@ public class MakeLrcDialog extends JDialog {
 				cardIndex--;
 				if (cardIndex <= 0)
 					cardIndex = 1;
+				if (cardIndex == 1) {
+					SongMessage songMessage = new SongMessage();
+					songMessage.setType(SongMessage.STOPMUSIC);
+					// 通知
+					ObserverManage.getObserver().setMessage(songMessage);
+
+				}
 				initBottomUI();
 				card.previous(cardPanel);
 			}
@@ -251,6 +310,19 @@ public class MakeLrcDialog extends JDialog {
 
 		this.getContentPane().add(titlePanel);
 		this.getContentPane().add(comPanel);
+	}
+
+	protected void close() {
+		Constants.makeLrcDialogIsShow = false;
+		dispose();
+
+		SongMessage songMessage = new SongMessage();
+		songMessage.setType(SongMessage.PLAYMUSIC);
+		// 通知
+		ObserverManage.getObserver().setMessage(songMessage);
+		// MessageIntent messageIntent = new MessageIntent();
+		// messageIntent.setAction(MessageIntent.CLOSE_MAKELRCDIALOG);
+		// ObserverManage.getObserver().setMessage(messageIntent);
 	}
 
 	/**

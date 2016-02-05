@@ -263,6 +263,7 @@ public class PlayListPanel extends JPanel implements Observer {
 				if (songMessage.getType() == SongMessage.INITMUSIC
 						|| songMessage.getType() == SongMessage.SERVICEPLAYINGMUSIC
 						|| songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
+						|| songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC
 						|| songMessage.getType() == SongMessage.ERRORMUSIC
 						|| songMessage.getType() == SongMessage.SERVICEERRORMUSIC) {
 					SongInfo mSongInfo = songMessage.getSongInfo();

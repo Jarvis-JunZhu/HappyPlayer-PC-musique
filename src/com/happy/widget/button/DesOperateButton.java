@@ -3,17 +3,12 @@ package com.happy.widget.button;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 
 import com.happy.common.Constants;
-import com.happy.model.MessageIntent;
-import com.happy.observable.ObserverManage;
 import com.happy.widget.panel.DesOperatePanel;
 
 /**
@@ -22,7 +17,7 @@ import com.happy.widget.panel.DesOperatePanel;
  * @author Administrator
  * 
  */
-public class DesOperateButton extends JButton implements Observer {
+public class DesOperateButton extends JButton {
 
 	/**
 	 * 
@@ -71,7 +66,7 @@ public class DesOperateButton extends JButton implements Observer {
 		this.desOperatePanel = desOperatePanel;
 
 		initLockEvent();
-		ObserverManage.getObserver().addObserver(this);
+
 	}
 
 	public DesOperateButton(String baseIconPath, String overIconPath,
@@ -107,7 +102,7 @@ public class DesOperateButton extends JButton implements Observer {
 		this.desOperatePanel = desOperatePanel;
 
 		initLockEvent();
-		ObserverManage.getObserver().addObserver(this);
+
 	}
 
 	public DesOperateButton(String baseIconPath, int width, int height,
@@ -132,17 +127,13 @@ public class DesOperateButton extends JButton implements Observer {
 		this.desOperatePanel = desOperatePanel;
 
 		initLockEvent();
-		ObserverManage.getObserver().addObserver(this);
+
 	}
 
 	private void initLockEvent() {
-		if (!Constants.desLrcIsLock) {
-			this.addMouseListener(mouseListener);
-			this.addMouseMotionListener(mouseListener);
-		} else {
-			this.removeMouseListener(mouseListener);
-			this.removeMouseMotionListener(mouseListener);
-		}
+
+		this.addMouseListener(mouseListener);
+		this.addMouseMotionListener(mouseListener);
 
 	}
 
@@ -150,7 +141,8 @@ public class DesOperateButton extends JButton implements Observer {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			desLrcDialogMouseListener.mouseClicked(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseClicked(e);
 		}
 
 		@Override
@@ -160,11 +152,13 @@ public class DesOperateButton extends JButton implements Observer {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			desLrcDialogMouseListener.mouseReleased(e);
-			// setCursor(null);
-			if (isHide) {
-				desOperatePanel.setEnter(false);
-				desLrcDialogMouseListener.mouseExited(e);
+			if (!Constants.desLrcIsLock) {
+				desLrcDialogMouseListener.mouseReleased(e);
+				// setCursor(null);
+				if (isHide) {
+					desOperatePanel.setEnter(false);
+					desLrcDialogMouseListener.mouseExited(e);
+				}
 			}
 		}
 
@@ -176,34 +170,23 @@ public class DesOperateButton extends JButton implements Observer {
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			desOperatePanel.setEnter(false);
-			desLrcDialogMouseListener.mouseExited(e);
+			if (!Constants.desLrcIsLock) {
+				desOperatePanel.setEnter(false);
+				desLrcDialogMouseListener.mouseExited(e);
+			}
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			desLrcDialogMouseListener.mouseDragged(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseDragged(e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			desLrcDialogMouseListener.mouseMoved(e);
+			if (!Constants.desLrcIsLock)
+				desLrcDialogMouseListener.mouseMoved(e);
 		}
 
-	}
-
-	@Override
-	public void update(Observable o, final Object data) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (data instanceof MessageIntent) {
-					MessageIntent messageIntent = (MessageIntent) data;
-					if (messageIntent.getAction().equals(
-							MessageIntent.LOCKDESLRC)) {
-						initLockEvent();
-					}
-				}
-			}
-		});
 	}
 }
