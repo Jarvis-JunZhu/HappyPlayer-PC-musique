@@ -82,11 +82,20 @@ public class MediaPlayerService implements Observer {
 				if (data instanceof SongMessage) {
 					SongMessage songMessage = (SongMessage) data;
 					if (songMessage.getType() == SongMessage.SERVICEPLAYMUSIC) {
+						SongInfo msongInfo = songMessage.getSongInfo();
+						if (msongInfo != null) {
+							songInfo = msongInfo;
+						}
 						playInfoMusic(songMessage.getSongInfo());
 					} else if (songMessage.getType() == SongMessage.SERVICEPAUSEMUSIC) {
 						initMusic();
-					} else if (songMessage.getType() == SongMessage.INITMUSIC
-							|| songMessage.getType() == SongMessage.SERVICEPLAYINIT) {
+					} else if (songMessage.getType() == SongMessage.INITMUSIC) {
+						SongInfo msongInfo = songMessage.getSongInfo();
+						if (msongInfo != null) {
+							songInfo = msongInfo;
+						}
+						initPlayer();
+					} else if (songMessage.getType() == SongMessage.SERVICEPLAYINIT) {
 						initPlayer();
 					} else if (songMessage.getType() == SongMessage.SERVICESEEKTOMUSIC) {
 						int progress = songMessage.getProgress();
@@ -217,7 +226,6 @@ public class MediaPlayerService implements Observer {
 	 * @param songInfo
 	 */
 	private void playInfoMusic(SongInfo msongInfo) {
-		this.songInfo = msongInfo;
 		if (songInfo == null) {
 
 			SongMessage msg = new SongMessage();

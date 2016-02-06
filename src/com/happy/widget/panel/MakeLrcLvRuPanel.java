@@ -263,7 +263,7 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 		oPanel.add(stopButton);
 		//
 
-		lrcComTextArea = new JTextArea("歌词文本");
+		lrcComTextArea = new JTextArea();
 		lrcComTextArea.setLineWrap(true); // 激活自动换行功能
 		lrcComTextArea.setWrapStyleWord(true); // 激活断行不断字功能
 
@@ -345,6 +345,10 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 
 				}
 
+				if (lrcComTextArea != null) {
+					lrcComTextArea.setText(mSongInfo.getDisplayName());
+				}
+
 				songSlider.setValue(0);
 				songSlider.setMaximum((int) mSongInfo.getDuration());
 
@@ -391,6 +395,10 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 
 	public JTextArea getLrcComTextArea() {
 		return lrcComTextArea;
+	}
+
+	public void dispose() {
+		ObserverManage.getObserver().deleteObserver(this);
 	}
 
 }

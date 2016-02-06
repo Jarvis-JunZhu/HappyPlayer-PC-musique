@@ -249,6 +249,7 @@ public class MakeLrcDialog extends JDialog {
 						ObserverManage.getObserver().setMessage(songMessage);
 
 						initBottomUI();
+						makeLrcZhiZuoPanel.initLrcPanelUI(lrcComText);
 						card.next(cardPanel);
 					}
 				} else {
@@ -313,6 +314,8 @@ public class MakeLrcDialog extends JDialog {
 	}
 
 	protected void close() {
+		makeLrcLvRuPanel.dispose();
+		makeLrcZhiZuoPanel.dispose();
 		Constants.makeLrcDialogIsShow = false;
 		dispose();
 
