@@ -222,6 +222,7 @@ public class MediaManage implements Observer {
 						if (songInfo == null) {
 							return;
 						}
+						playStatus = PAUSE;
 						stopMusic();
 					} else if (songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC) {
 						playStatus = PAUSE;

@@ -1,7 +1,10 @@
 package com.happy.widget.panel;
 
 import java.awt.Color;
+import java.awt.DefaultKeyboardFocusManager;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -24,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.happy.common.Constants;
+import com.happy.manage.MediaManage;
 import com.happy.model.KscLyricsLineInfo;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
@@ -73,6 +77,8 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 	 * 歌词列表数据
 	 */
 	private List<KscLyricsLineInfo> lrcLists;
+
+	private KeyListener keyListener = new KeyListener();
 
 	public MakeLrcZhiZuoPanel(int width, int height, int bHSize,
 			MakeLrcLvRuPanel makeLrcLvRuPanel) {
@@ -208,6 +214,61 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 		this.add(songSlider);
 		this.add(songLabel);
 		this.add(bg);
+
+	}
+
+	private class KeyListener implements KeyEventDispatcher {
+
+		@Override
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			switch (keyCode) {
+			case KeyEvent.VK_SPACE:
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					// 按下时你要做的事情
+					playOrPauseMusic();
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					// 放开时你要做的事情
+
+				}
+
+				break;
+			case KeyEvent.VK_KP_LEFT:
+				// 用于数字键盘向左方向键的常量
+				break;
+			case KeyEvent.VK_KP_RIGHT:
+				// 用于数字键盘向右方向键的常量
+				break;
+			case KeyEvent.VK_LEFT:
+				// 用于非数字键盘向左方向键的常量
+				break;
+			case KeyEvent.VK_RIGHT:
+				// 用于非数字键盘向右方向键的常量
+				break;
+			default:
+				break;
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * 暂停或者播放
+	 */
+	private void playOrPauseMusic() {
+		if (MediaManage.getMediaManage().getPlayStatus() == MediaManage.PLAYING) {
+			// 当前正在播放，发送暂停
+			SongMessage msg = new SongMessage();
+			msg.setType(SongMessage.PAUSEMUSIC);
+			ObserverManage.getObserver().setMessage(msg);
+		} else {
+
+			SongMessage songMessage = new SongMessage();
+			songMessage.setType(SongMessage.PLAYMUSIC);
+			// 通知
+			ObserverManage.getObserver().setMessage(songMessage);
+		}
+
 	}
 
 	/**
@@ -230,6 +291,8 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 	public void initLrcPanelUI(String lrcCom) {
 		lrcLists = new ArrayList<KscLyricsLineInfo>();
 		paseLrcTxt(lrcCom);
+		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.addKeyEventDispatcher(keyListener);
 	}
 
 	/**
@@ -431,6 +494,8 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 	}
 
 	public void dispose() {
+		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.removeKeyEventDispatcher(keyListener);
 		ObserverManage.getObserver().deleteObserver(this);
 	}
 }
