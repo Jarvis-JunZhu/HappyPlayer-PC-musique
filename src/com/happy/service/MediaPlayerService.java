@@ -361,4 +361,9 @@ public class MediaPlayerService implements Observer {
 			}
 		}
 	}
+
+	public SongInfo getSongInfo() {
+		return songInfo;
+	}
+	
 }

@@ -7,6 +7,10 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -18,11 +22,13 @@ import javax.swing.SwingUtilities;
 import com.happy.common.Constants;
 import com.happy.event.PanelMoveDialog;
 import com.happy.manage.MediaManage;
+import com.happy.model.MessageIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
 import com.happy.widget.button.BaseButton;
 import com.happy.widget.button.DefButton;
+import com.happy.widget.panel.MakeLrcFinishPanel;
 import com.happy.widget.panel.MakeLrcLvRuPanel;
 import com.happy.widget.panel.MakeLrcZhiZuoPanel;
 
@@ -89,6 +95,14 @@ public class MakeLrcDialog extends JDialog {
 	 * 歌词制作面板
 	 */
 	private MakeLrcZhiZuoPanel makeLrcZhiZuoPanel;
+	/**
+	 * 歌词制作完成面板
+	 */
+	private MakeLrcFinishPanel makeLrcFinishPanel;
+	/**
+	 * 歌词文件名
+	 */
+	private String fileName = "";
 
 	public MakeLrcDialog() {
 		// 设定禁用窗体装饰，这样就取消了默认的窗体结构
@@ -114,8 +128,10 @@ public class MakeLrcDialog extends JDialog {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				SongInfo songInfo = MediaManage.getMediaManage().getSongInfo();
+				fileName = songInfo.getDisplayName();
 				makeLrcLvRuPanel.initData(songInfo);
 				makeLrcZhiZuoPanel.initData(songInfo);
+				makeLrcFinishPanel.initData(songInfo);
 			}
 		});
 	}
@@ -200,15 +216,13 @@ public class MakeLrcDialog extends JDialog {
 		//
 		makeLrcLvRuPanel = new MakeLrcLvRuPanel(wC, hC, oBWSize, bHSize);
 
-		makeLrcZhiZuoPanel = new MakeLrcZhiZuoPanel(wC, hC, bHSize,
-				makeLrcLvRuPanel);
+		makeLrcZhiZuoPanel = new MakeLrcZhiZuoPanel(wC, hC, bHSize, comPanel);
 
-		JPanel panel3 = new JPanel();
-		panel3.setBackground(Color.blue);
+		makeLrcFinishPanel = new MakeLrcFinishPanel(wC, hC, oBWSize, bHSize);
 
 		cardPanel.add(makeLrcLvRuPanel, "lvru");
 		cardPanel.add(makeLrcZhiZuoPanel, "zhizuo");
-		cardPanel.add(panel3, "3");
+		cardPanel.add(makeLrcFinishPanel, "finish");
 
 		// 取消按钮
 		DefButton chanelButton = new DefButton(bWSize, bHSize);
@@ -253,6 +267,12 @@ public class MakeLrcDialog extends JDialog {
 						card.next(cardPanel);
 					}
 				} else {
+					if (cardIndex == 3) {
+						makeLrcZhiZuoPanel.removeKeyListener();
+						List<String> dataLines = makeLrcZhiZuoPanel
+								.getLrcsData();
+						makeLrcFinishPanel.setKscData(dataLines);
+					}
 					initBottomUI();
 					card.next(cardPanel);
 				}
@@ -276,6 +296,13 @@ public class MakeLrcDialog extends JDialog {
 					// 通知
 					ObserverManage.getObserver().setMessage(songMessage);
 
+					makeLrcZhiZuoPanel.removeKeyListener();
+				} else if (cardIndex == 2) {
+					SongMessage songMessage = new SongMessage();
+					songMessage.setType(SongMessage.STOPMUSIC);
+					// 通知
+					ObserverManage.getObserver().setMessage(songMessage);
+					makeLrcZhiZuoPanel.addKeyListener();
 				}
 				initBottomUI();
 				card.previous(cardPanel);
@@ -290,7 +317,38 @@ public class MakeLrcDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				List<String> dataLines = makeLrcZhiZuoPanel.getLrcsData();
+				String content = "";
+				for (int i = 0; i < dataLines.size(); i++) {
+					content += dataLines.get(i) + "\n";
+				}
+				File fp = new File(Constants.PATH_KSC + File.separator
+						+ fileName + ".ksc");
+				try {
 
+					String encoding = "GB2312";// 设置文件的编码！！
+					OutputStreamWriter outstream = new OutputStreamWriter(
+							new FileOutputStream(fp), encoding);
+					PrintWriter writer = new PrintWriter(outstream);
+					// writer.format(encoding, null);
+					writer.write(content);
+					writer.close();
+
+					JOptionPane.showMessageDialog(MakeLrcDialog.this,
+							"歌词文件保存成功", "提示", JOptionPane.PLAIN_MESSAGE);
+
+					// 通知
+					MessageIntent messageIntent = new MessageIntent();
+					messageIntent.setAction(MessageIntent.CLOSE_MAKELRCDIALOG);
+					ObserverManage.getObserver().setMessage(messageIntent);
+
+					close();
+
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(MakeLrcDialog.this,
+							"歌词文件保存失败", "提示", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		//
@@ -313,19 +371,15 @@ public class MakeLrcDialog extends JDialog {
 		this.getContentPane().add(comPanel);
 	}
 
+	/**
+	 * 关闭窗口
+	 */
 	protected void close() {
 		makeLrcLvRuPanel.dispose();
 		makeLrcZhiZuoPanel.dispose();
-		Constants.makeLrcDialogIsShow = false;
+		makeLrcFinishPanel.dispose();
 		dispose();
-
-		SongMessage songMessage = new SongMessage();
-		songMessage.setType(SongMessage.PLAYMUSIC);
-		// 通知
-		ObserverManage.getObserver().setMessage(songMessage);
-		// MessageIntent messageIntent = new MessageIntent();
-		// messageIntent.setAction(MessageIntent.CLOSE_MAKELRCDIALOG);
-		// ObserverManage.getObserver().setMessage(messageIntent);
+		Constants.makeLrcDialogIsShow = false;
 	}
 
 	/**
@@ -356,6 +410,8 @@ public class MakeLrcDialog extends JDialog {
 		String backgroundPath = Constants.PATH_ICON + File.separator + "step_"
 				+ i + ".png";
 		ImageIcon background = new ImageIcon(backgroundPath);// 背景图片
+		background.setImage(background.getImage().getScaledInstance(width - 10,
+				stepJLabel.getHeight(), Image.SCALE_SMOOTH));
 		stepJLabel.setIcon(background);
 	}
 

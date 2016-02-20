@@ -66,7 +66,7 @@ public class KscLyricsParserUtil {
 	}
 
 	/**
-	 * 解析歌词
+	 * 通过歌词文件解析歌词
 	 * 
 	 * @param br
 	 * @throws NumberFormatException
@@ -79,77 +79,109 @@ public class KscLyricsParserUtil {
 		String dataLine = "";
 		int index = 0;
 		while ((dataLine = br.readLine()) != null) {
-			if (dataLine.startsWith(LEGAL_SONGNAME_PREFIX)) {
-				// karaoke.songname :='爱就一个字';
-				String temp[] = dataLine.split("\'");
-				songName = temp[1];
-				// System.out.println(songName);
-			} else if (dataLine.startsWith(LEGAL_SINGERNAME_PREFIX)) {
-				// karaoke.singer :='张信哲';
-				String temp[] = dataLine.split("\'");
-				singerName = temp[1];
-				// System.out.println(singerName);
-			} else if (dataLine.startsWith(LEGAL_LYRICS_LINE_PREFIX)) {
-
-				KscLyricsLineInfo info = new KscLyricsLineInfo();
-
-				int left = LEGAL_LYRICS_LINE_PREFIX.length() + 1;
-				int right = dataLine.length();
-				String[] dataLineComment = dataLine.substring(left + 2,
-						right - 3).split("', '");
-
-				// 获取开始时间
-				info.setStartTimeStr(dataLineComment[0]);
-				info.setStartTime(timeStrParserInteger(dataLineComment[0]));
-
-				// 获取结束时间
-				info.setEndTimeStr(dataLineComment[1]);
-				info.setEndTime(timeStrParserInteger(dataLineComment[1]));
-
-				// 获取歌词
-				// karaoke.add('00:22.000', '00:25.000',
-				// '拨开天空的乌云','480,240,330,440,270,480,760');
-				// karaoke.add('00:36.810', '00:40.780', '我想[你 ]身不由己',
-				// '480,360,1200,240,320,320,1050');
-				// karaoke.add('00:28.380', '00:31.500',
-				// '(女:)问你一句话','500,440,370,500,1310');
-				// karaoke.add('00:16.460', '00:17.710',
-				// '[Pretty][woman]','440,810');
-				// karaoke.add('02:15.590', '02:18.220',
-				// '与世界分享更[好][oho]','260,310,260,220,260,270,310,740');
-				info.setLineLyrics(getLyricsComment(dataLineComment[2]));
-				// System.out.println("====="
-				// + getLyricsComment(dataLineComment[2]));
-
-				// 1.先将()的内容转换成[]，如：(女:)问你一句话 将其转换成[女:问]你一句话
-				// String newLrc = removeGuoHao(dataLineComment[2]);
-
-				String newLrc = dataLineComment[2];
-
-				List<String> lrcList = new ArrayList<String>();
-				// 将[]里的歌词分离出来
-				lrcList = removeZhongGuoHao(newLrc);
-
-				String lyricsWords[] = new String[lrcList.size()];
-				for (int i = 0; i < lrcList.size(); i++) {
-					lyricsWords[i] = lrcList.get(i);
-				}
-				info.setLyricsWords(lyricsWords);
-
-				// 获取每个歌词的时间
-				String wordsDisIntervalStr[] = dataLineComment[3].split(",");
-				int[] wordsDisInterval = new int[wordsDisIntervalStr.length];
-				for (int i = 0; i < wordsDisIntervalStr.length; i++) {
-					wordsDisInterval[i] = Integer
-							.parseInt(wordsDisIntervalStr[i]);
-				}
-				info.setWordsDisInterval(wordsDisInterval);
-
-				//
+			KscLyricsLineInfo info = parserKscStr(dataLine);
+			//
+			if (info != null) {
 				lyricsLineTreeMap.put(index, info);
 				index++;
 			}
 		}
+
+	}
+
+	/**
+	 * 通过每行歌词的列表数据集合解析歌词
+	 * 
+	 * @param dataLines
+	 */
+	public void parserksc(List<String> dataLines) {
+		if (lyricsLineTreeMap == null)
+			lyricsLineTreeMap = new TreeMap<Integer, KscLyricsLineInfo>();
+		int index = 0;
+		for (int i = 0; i < dataLines.size(); i++) {
+			String dataLine = dataLines.get(i);
+			KscLyricsLineInfo info = parserKscStr(dataLine);
+			//
+			if (info != null) {
+				lyricsLineTreeMap.put(index, info);
+				index++;
+			}
+		}
+	}
+
+	/**
+	 * 解析每一行的歌词，并返回该行歌词的实体数据
+	 * 
+	 * @param dataLine
+	 * @return
+	 */
+	private KscLyricsLineInfo parserKscStr(String dataLine) {
+		KscLyricsLineInfo info = null;
+		if (dataLine.startsWith(LEGAL_SONGNAME_PREFIX)) {
+			// karaoke.songname :='爱就一个字';
+			String temp[] = dataLine.split("\'");
+			songName = temp[1];
+			// System.out.println(songName);
+		} else if (dataLine.startsWith(LEGAL_SINGERNAME_PREFIX)) {
+			// karaoke.singer :='张信哲';
+			String temp[] = dataLine.split("\'");
+			singerName = temp[1];
+			// System.out.println(singerName);
+		} else if (dataLine.startsWith(LEGAL_LYRICS_LINE_PREFIX)) {
+			info = new KscLyricsLineInfo();
+			int left = LEGAL_LYRICS_LINE_PREFIX.length() + 1;
+			int right = dataLine.length();
+			String[] dataLineComment = dataLine.substring(left + 2, right - 3)
+					.split("', '");
+
+			// 获取开始时间
+			info.setStartTimeStr(dataLineComment[0]);
+			info.setStartTime(timeStrParserInteger(dataLineComment[0]));
+
+			// 获取结束时间
+			info.setEndTimeStr(dataLineComment[1]);
+			info.setEndTime(timeStrParserInteger(dataLineComment[1]));
+
+			// 获取歌词
+			// karaoke.add('00:22.000', '00:25.000',
+			// '拨开天空的乌云','480,240,330,440,270,480,760');
+			// karaoke.add('00:36.810', '00:40.780', '我想[你 ]身不由己',
+			// '480,360,1200,240,320,320,1050');
+			// karaoke.add('00:28.380', '00:31.500',
+			// '(女:)问你一句话','500,440,370,500,1310');
+			// karaoke.add('00:16.460', '00:17.710',
+			// '[Pretty][woman]','440,810');
+			// karaoke.add('02:15.590', '02:18.220',
+			// '与世界分享更[好][oho]','260,310,260,220,260,270,310,740');
+			info.setLineLyrics(getLyricsComment(dataLineComment[2]));
+			// System.out.println("====="
+			// + getLyricsComment(dataLineComment[2]));
+
+			// 1.先将()的内容转换成[]，如：(女:)问你一句话 将其转换成[女:问]你一句话
+			// String newLrc = removeGuoHao(dataLineComment[2]);
+
+			String newLrc = dataLineComment[2];
+
+			List<String> lrcList = new ArrayList<String>();
+			// 将[]里的歌词分离出来
+			lrcList = removeZhongGuoHao(newLrc);
+
+			String lyricsWords[] = new String[lrcList.size()];
+			for (int i = 0; i < lrcList.size(); i++) {
+				lyricsWords[i] = lrcList.get(i);
+			}
+			info.setLyricsWords(lyricsWords);
+
+			// 获取每个歌词的时间
+			String wordsDisIntervalStr[] = dataLineComment[3].split(",");
+			int[] wordsDisInterval = new int[wordsDisIntervalStr.length];
+			for (int i = 0; i < wordsDisIntervalStr.length; i++) {
+				wordsDisInterval[i] = Integer.parseInt(wordsDisIntervalStr[i]);
+			}
+			info.setWordsDisInterval(wordsDisInterval);
+
+		}
+		return info;
 
 	}
 

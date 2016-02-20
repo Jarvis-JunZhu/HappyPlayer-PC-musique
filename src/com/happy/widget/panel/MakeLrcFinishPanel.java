@@ -8,25 +8,26 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.io.File;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TreeMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.happy.common.Constants;
 import com.happy.manage.MediaManage;
+import com.happy.model.KscLyricsLineInfo;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
+import com.happy.util.KscLyricsParserUtil;
 import com.happy.util.MediaUtils;
 import com.happy.widget.button.DefButton;
 import com.happy.widget.slider.MakeLrcSlider;
@@ -37,7 +38,7 @@ import com.happy.widget.slider.MakeLrcSlider;
  * @author zhangliangming
  * 
  */
-public class MakeLrcLvRuPanel extends JPanel implements Observer {
+public class MakeLrcFinishPanel extends JPanel implements Observer {
 
 	/**
 	 * 
@@ -84,9 +85,19 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 	/**
 	 * 歌词内容
 	 */
-	private JTextArea lrcComTextArea;
+	private KscManyLineLyricsView kscManyLineLyricsView;
 
-	public MakeLrcLvRuPanel(int width, int height, int bWSize, int bHSize) {
+	/**
+	 * 歌词解析
+	 */
+	private KscLyricsParserUtil kscLyricsParser;
+
+	/**
+	 * 歌词列表
+	 */
+	private TreeMap<Integer, KscLyricsLineInfo> lyricsLineTreeMap;
+
+	public MakeLrcFinishPanel(int width, int height, int bWSize, int bHSize) {
 		this.width = width;
 		this.height = height;
 		this.bWSize = bWSize;
@@ -261,25 +272,19 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 		oPanel.add(pauseButton);
 		oPanel.add(playButton);
 		oPanel.add(stopButton);
-		//
 
-		lrcComTextArea = new JTextArea();
-		lrcComTextArea.setLineWrap(true); // 激活自动换行功能
-		lrcComTextArea.setWrapStyleWord(true); // 激活断行不断字功能
-
-		JScrollPane jScrollPane = new JScrollPane(lrcComTextArea);
-		// jScrollPane.setBorder(null);
-
-		jScrollPane.getVerticalScrollBar().setUI(new ScrollBarUI(100));
-		jScrollPane.getVerticalScrollBar().setUnitIncrement(30);
-		// 不显示水平的滚动条
-		jScrollPane
-				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-		jScrollPane.setBounds(10, oPanel.getY() + oPanel.getHeight() + padding,
+		JPanel bg2 = new JPanel();
+		bg2.setBackground(new Color(157, 187, 212));
+		bg2.setBounds(10, oPanel.getY() + oPanel.getHeight() + padding,
 				width - 16, height - oH - padding);
-
-		this.add(jScrollPane);
+		//
+		kscManyLineLyricsView = new KscManyLineLyricsView(width - 16, height
+				- oH - padding);
+		kscManyLineLyricsView.setBounds(10, oPanel.getY() + oPanel.getHeight()
+				+ padding, width - 16, height - oH - padding);
+		kscManyLineLyricsView.removeMouseListener();
+		this.add(kscManyLineLyricsView);
+		this.add(bg2);
 		this.add(oPanel);
 		this.add(bg);
 	}
@@ -293,6 +298,30 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 		songMessage.setSongInfo(songInfo);
 		songMessage.setType(SongMessage.INITMUSIC);
 		refreshUI(songMessage);
+	}
+
+	/**
+	 * 设置ksc歌词集合
+	 * 
+	 * @param dataLines
+	 */
+	public void setKscData(List<String> dataLines) {
+		//
+		SongMessage songMessage = new SongMessage();
+		songMessage.setType(SongMessage.STOPMUSIC);
+		// 通知
+		ObserverManage.getObserver().setMessage(songMessage);
+		//
+		kscLyricsParser = new KscLyricsParserUtil();
+		kscLyricsParser.parserksc(dataLines);
+		lyricsLineTreeMap = kscLyricsParser.getLyricsLineTreeMap();
+
+		if (lyricsLineTreeMap != null && lyricsLineTreeMap.size() != 0) {
+			kscManyLineLyricsView.init(0, kscLyricsParser);
+			kscManyLineLyricsView.setHasKsc(true);
+		} else {
+			kscManyLineLyricsView.setHasKsc(false);
+		}
 	}
 
 	@Override
@@ -344,10 +373,7 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 					pauseButton.setVisible(false);
 
 				}
-
-				if (lrcComTextArea != null) {
-					lrcComTextArea.setText(mSongInfo.getDisplayName());
-				}
+				kscManyLineLyricsView.setHasKsc(false);
 
 				songSlider.setValue(0);
 				songSlider.setMaximum((int) mSongInfo.getDuration());
@@ -370,6 +396,13 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 									.getDuration()));
 				}
 
+				if (kscManyLineLyricsView.getHasKsc()
+						&& !kscManyLineLyricsView.getBlScroll()) {
+
+					kscManyLineLyricsView.showLrc((int) mSongInfo
+							.getPlayProgress());
+				}
+
 			} else if (songMessage.getType() == SongMessage.SERVICEPAUSEEDMUSIC
 					|| songMessage.getType() == SongMessage.SERVICESTOPEDMUSIC) {
 				playButton.setVisible(true);
@@ -380,8 +413,18 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 						.getPlayProgress())
 						+ "/"
 						+ MediaUtils.formatTime((int) mSongInfo.getDuration()));
+
+				if (kscManyLineLyricsView.getHasKsc()
+						&& !kscManyLineLyricsView.getBlScroll()) {
+
+					kscManyLineLyricsView.showLrc((int) mSongInfo
+							.getPlayProgress());
+				}
 			}
 		} else {
+
+			if (kscManyLineLyricsView != null)
+				kscManyLineLyricsView.setHasKsc(false);
 
 			songSlider.setValue(0);
 			songSlider.setMaximum(0);
@@ -393,10 +436,13 @@ public class MakeLrcLvRuPanel extends JPanel implements Observer {
 		}
 	}
 
-	public JTextArea getLrcComTextArea() {
-		return lrcComTextArea;
+	public TreeMap<Integer, KscLyricsLineInfo> getLyricsLineTreeMap() {
+		return lyricsLineTreeMap;
 	}
 
+	/**
+	 * 关闭
+	 */
 	public void dispose() {
 		ObserverManage.getObserver().deleteObserver(this);
 	}

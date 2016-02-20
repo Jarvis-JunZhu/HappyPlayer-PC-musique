@@ -16,9 +16,11 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Stack;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.ScrollPaneConstants;
@@ -29,9 +31,11 @@ import javax.swing.event.ChangeListener;
 import com.happy.common.Constants;
 import com.happy.manage.MediaManage;
 import com.happy.model.KscLyricsLineInfo;
+import com.happy.model.LrcEventIntent;
 import com.happy.model.SongInfo;
 import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
+import com.happy.service.MediaPlayerService;
 import com.happy.util.MediaUtils;
 import com.happy.widget.slider.MakeLrcSlider;
 
@@ -70,19 +74,36 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 	 */
 	private boolean isStartTrackingTouch = false;
 	/**
-	 * 录入面板
+	 * 歌词列表面板
 	 */
-	private MakeLrcLvRuPanel makeLrcLvRuPanel;
+	private JPanel lrcListView;
 	/**
 	 * 歌词列表数据
 	 */
 	private List<KscLyricsLineInfo> lrcLists;
 
 	private KeyListener keyListener = new KeyListener();
+	/**
+	 * 滚动面板
+	 */
+	private JScrollPane jScrollPane;
+	/**
+	 * 滚动条
+	 */
+	private JScrollBar jScrollBar;
+	/**
+	 * 内容面板
+	 */
+	private JPanel comPanel;
 
-	public MakeLrcZhiZuoPanel(int width, int height, int bHSize,
-			MakeLrcLvRuPanel makeLrcLvRuPanel) {
-		this.makeLrcLvRuPanel = makeLrcLvRuPanel;
+	/**
+	 * 当前歌词的所在行数
+	 */
+	private int lyricsLineNum = -1;
+
+	public MakeLrcZhiZuoPanel(int width, int height, int bHSize, JPanel comPanel) {
+
+		this.comPanel = comPanel;
 		this.width = width;
 		this.height = height;
 		this.bHSize = bHSize;
@@ -102,7 +123,7 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 				+ "zhizuo_op.png";
 		ImageIcon obgBackground = new ImageIcon(obgBackgroundPath);
 		obgBackground.setImage(obgBackground.getImage().getScaledInstance(
-				width, oH, Image.SCALE_SMOOTH));
+				width - 10, oH - 10, Image.SCALE_SMOOTH));
 		JLabel bg = new JLabel(obgBackground);
 		bg.setBounds(padding, 0, width - padding * 2, oH);
 
@@ -197,19 +218,22 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 			}
 		});
 
-		JScrollPane jScrollPane = new JScrollPane();
+		lrcListView = new JPanel();
+		lrcListView.setOpaque(false);
+		jScrollPane = new JScrollPane(lrcListView);
 
 		jScrollPane.getVerticalScrollBar().setUI(new ScrollBarUI(100));
 		jScrollPane.getVerticalScrollBar().setUnitIncrement(30);
 		// 不显示水平的滚动条
 		jScrollPane
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		jScrollBar = jScrollPane.getVerticalScrollBar();
 
 		int jh = height - oH - padding * 3 - bHSize;
 		jScrollPane.setBounds(padding,
 				songSlider.getY() + songSlider.getHeight() + padding, width
 						- padding * 2, jh);
-
+		lrcListView.setLayout(new BoxLayout(lrcListView, BoxLayout.Y_AXIS));
 		this.add(jScrollPane);
 		this.add(songSlider);
 		this.add(songLabel);
@@ -235,21 +259,157 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 				break;
 			case KeyEvent.VK_KP_LEFT:
 				// 用于数字键盘向左方向键的常量
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					// 按下时你要做的事情
+					preLrcIndex();
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					// 放开时你要做的事情
+
+				}
 				break;
 			case KeyEvent.VK_KP_RIGHT:
 				// 用于数字键盘向右方向键的常量
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					// 按下时你要做的事情
+					nextLrcIndex();
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					// 放开时你要做的事情
+
+				}
 				break;
 			case KeyEvent.VK_LEFT:
 				// 用于非数字键盘向左方向键的常量
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					// 按下时你要做的事情
+					preLrcIndex();
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					// 放开时你要做的事情
+
+				}
 				break;
 			case KeyEvent.VK_RIGHT:
 				// 用于非数字键盘向右方向键的常量
+				if (e.getID() == KeyEvent.KEY_PRESSED) {
+					// 按下时你要做的事情
+					nextLrcIndex();
+				} else if (e.getID() == KeyEvent.KEY_RELEASED) {
+					// 放开时你要做的事情
+
+				}
 				break;
 			default:
 				break;
 			}
 			return false;
 		}
+	}
+
+	/**
+	 * 更新歌词列表ui
+	 * 
+	 * @param lrcEventIntent
+	 */
+	private void refreshLrcUI(LrcEventIntent lrcEventIntent) {
+		if (lyricsLineNum < lrcLists.size()) {
+			// 设置旧索引的界面ui
+			LrcListViewItemPanel lrcListViewItemPanel = (LrcListViewItemPanel) lrcListView
+					.getComponent(lyricsLineNum);
+			LrcComPanel lrcComPanel = lrcListViewItemPanel.getLrcComPanel();
+			lrcComPanel.setSelect(false);
+		}
+		// 设置新索引的界面ui
+		int newLyricsLineNum = lrcEventIntent.getLrcIndex();
+		lyricsLineNum = newLyricsLineNum;
+		LrcListViewItemPanel newLrcListViewItemPanel = (LrcListViewItemPanel) lrcListView
+				.getComponent(lyricsLineNum);
+		LrcComPanel newLrcComPanel = newLrcListViewItemPanel.getLrcComPanel();
+		newLrcComPanel.setSelect(true);
+	}
+
+	/**
+	 * 上一个歌词
+	 */
+	public void preLrcIndex() {
+		if (lyricsLineNum > lrcLists.size()) {
+			return;
+		}
+		SongInfo songInfo = MediaPlayerService.getMediaPlayerService()
+				.getSongInfo();
+		int playProgress = (int) songInfo.getPlayProgress();
+		LrcListViewItemPanel lrcListViewItemPanel = (LrcListViewItemPanel) lrcListView
+				.getComponent(lyricsLineNum);
+		LrcComPanel lrcComPanel = lrcListViewItemPanel.getLrcComPanel();
+		lrcComPanel.setSelect(true);
+		lrcComPanel.setPreLrcIndex(playProgress);
+	}
+
+	/**
+	 * 下一个歌词
+	 */
+	public void nextLrcIndex() {
+		if (lyricsLineNum > lrcLists.size()) {
+			// System.out.println("制作完成");
+			// // 输出相关的歌词数据
+			// for (int i = 0; i < lrcListView.getComponentCount(); i++) {
+			// LrcListViewItemPanel lrcListViewItemPanel =
+			// (LrcListViewItemPanel) lrcListView
+			// .getComponent(i);
+			// LrcComPanel lrcComPanel = lrcListViewItemPanel.getLrcComPanel();
+			// KscLyricsLineInfo kscLyricsLineInfo = lrcComPanel
+			// .getKscLyricsLineInfo();
+			// if (kscLyricsLineInfo != null)
+			// System.out.println(kscLyricsLineInfo.getKscString());
+			// }
+			return;
+		}
+		// 如果是最后一行歌词已经完成最后一个歌词了，则设置最后一行歌词的最后一个歌词的结束时间
+		if (lyricsLineNum == lrcLists.size()) {
+			lyricsLineNum--;
+		}
+		LrcListViewItemPanel lrcListViewItemPanel = (LrcListViewItemPanel) lrcListView
+				.getComponent(lyricsLineNum);
+		LrcComPanel lrcComPanel = lrcListViewItemPanel.getLrcComPanel();
+		SongInfo songInfo = MediaPlayerService.getMediaPlayerService()
+				.getSongInfo();
+		int playProgress = (int) songInfo.getPlayProgress();
+		// 已经读到最后一个歌词了
+		if (lrcComPanel.isFinish()) {
+			// 判断最后一个歌词的结束时间是否存在
+			if (!lrcComPanel.isComFinish())
+				lrcComPanel.setLastLrcIndex(playProgress);
+			if (lyricsLineNum == lrcLists.size() - 1) {
+				lyricsLineNum = lyricsLineNum + 2;
+			} else {
+				// 跳转到下一行歌词
+				lyricsLineNum++;
+			}
+			nextLrcIndex();
+		} else {
+			jScrollBar.setValue(60 * (lyricsLineNum - 1));
+			lrcComPanel.setSelect(true);
+			lrcComPanel.setNextLrcIndex(playProgress);
+		}
+	}
+
+	/**
+	 * 获取所有的歌词集合数据
+	 * 
+	 * @return
+	 */
+	public List<String> getLrcsData() {
+		List<String> dataLines = new ArrayList<String>();
+		for (int i = 0; i < lrcListView.getComponentCount(); i++) {
+			LrcListViewItemPanel lrcListViewItemPanel = (LrcListViewItemPanel) lrcListView
+					.getComponent(i);
+			LrcComPanel lrcComPanel = lrcListViewItemPanel.getLrcComPanel();
+			KscLyricsLineInfo kscLyricsLineInfo = lrcComPanel
+					.getKscLyricsLineInfo();
+			if (kscLyricsLineInfo != null) {
+				String lrc = kscLyricsLineInfo.getKscString();
+				dataLines.add(lrc);
+			}
+		}
+		return dataLines;
 	}
 
 	/**
@@ -291,8 +451,7 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 	public void initLrcPanelUI(String lrcCom) {
 		lrcLists = new ArrayList<KscLyricsLineInfo>();
 		paseLrcTxt(lrcCom);
-		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager()
-				.addKeyEventDispatcher(keyListener);
+		addKeyListener();
 	}
 
 	/**
@@ -301,7 +460,7 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 	 * @param lrcCom
 	 */
 	private void paseLrcTxt(String lrcCom) {
-
+		lrcListView.removeAll();
 		String lrcComs[] = lrcCom.split("\n");
 		for (int i = 0; i < lrcComs.length; i++) {
 			String lrcComTxt = lrcComs[i];
@@ -319,12 +478,15 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 
 		for (int i = 0; i < lrcLists.size(); i++) {
 			KscLyricsLineInfo kscLyricsLineInfo = lrcLists.get(i);
-			for (int j = 0; j < kscLyricsLineInfo.getLyricsWords().length; j++) {
-				System.out.print(kscLyricsLineInfo.getLyricsWords()[j]);
-			}
-			System.out.println();
+			LrcListViewItemPanel lrcListViewItemPanel = new LrcListViewItemPanel(
+					i, kscLyricsLineInfo, this, comPanel, width);
+			lrcListView.add(lrcListViewItemPanel);
 		}
+		lyricsLineNum = 0;
 
+		jScrollBar.setMaximum(60 * lrcLists.size());
+		jScrollBar.setMinimum(60);
+		this.updateUI();
 	}
 
 	/**
@@ -374,7 +536,16 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 		int i = 0;
 		while (it.hasNext()) {
 			String com = it.next();
-			lyricsWords[i++] = com;
+			String tempCom = "";
+			for (int j = 0; j < com.length(); j++) {
+				char reg = com.charAt(j);
+				if (reg == '[')
+					continue;
+				if (reg == ']')
+					continue;
+				tempCom += reg;
+			}
+			lyricsWords[i++] = tempCom;
 			newLrc += com;
 		}
 		kscLyricsLineInfo.setLyricsWords(lyricsWords);
@@ -441,6 +612,9 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 					|| songMessage.getType() == SongMessage.SERVICEERRORMUSIC) {
 				refreshUI(songMessage);
 			}
+		} else if (data instanceof LrcEventIntent) {
+			LrcEventIntent lrcEventIntent = (LrcEventIntent) data;
+			refreshLrcUI(lrcEventIntent);
 		}
 	}
 
@@ -493,6 +667,25 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 		}
 	}
 
+	/**
+	 * 添加键盘事件
+	 */
+	public void addKeyListener() {
+		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.addKeyEventDispatcher(keyListener);
+	}
+
+	/**
+	 * 移除键盘事件
+	 */
+	public void removeKeyListener() {
+		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.removeKeyEventDispatcher(keyListener);
+	}
+
+	/**
+	 * 关闭界面
+	 */
 	public void dispose() {
 		DefaultKeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.removeKeyEventDispatcher(keyListener);

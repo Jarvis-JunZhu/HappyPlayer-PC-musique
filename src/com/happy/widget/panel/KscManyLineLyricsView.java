@@ -155,6 +155,10 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 	 * 歌词滚动监听器
 	 */
 	private LrcScrollListener lrcScrollListener = new LrcScrollListener();
+	/**
+	 * 是否移除鼠标事件
+	 */
+	private boolean isRemoveListener = false;
 
 	public KscManyLineLyricsView(int width, int height) {
 		this.width = width;
@@ -443,7 +447,7 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 
 	public void setHasKsc(boolean hasKsc) {
 		this.hasKsc = hasKsc;
-		if (hasKsc) {
+		if (hasKsc && !isRemoveListener) {
 			this.addMouseListener(lrcScrollListener);
 			this.addMouseMotionListener(lrcScrollListener);
 		} else {
@@ -452,6 +456,15 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 		}
 
 		repaint();
+	}
+
+	/**
+	 * 去掉鼠标事件
+	 */
+	public void removeMouseListener() {
+		isRemoveListener = true;
+		this.removeMouseListener(lrcScrollListener);
+		this.removeMouseMotionListener(lrcScrollListener);
 	}
 
 	private Toolkit tk = Toolkit.getDefaultToolkit();
@@ -520,7 +533,7 @@ public class KscManyLineLyricsView extends JPanel implements Observer {
 
 			repaint();
 
-			//延迟刷新歌词，避免歌词出现闪烁
+			// 延迟刷新歌词，避免歌词出现闪烁
 			new Thread() {
 
 				@Override

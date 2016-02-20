@@ -9,7 +9,7 @@ public class KscLyricsLineInfo {
 	/**
 	 * 歌词开始时间字符串
 	 */
-	private String startTimeStr = null;
+	private String startTimeStr = "";
 	/**
 	 * 歌词开始时间
 	 */
@@ -22,11 +22,11 @@ public class KscLyricsLineInfo {
 	/**
 	 * 歌词结束时间字符串
 	 */
-	private String endTimeStr = null;
+	private String endTimeStr = "";
 	/**
 	 * 该行歌词
 	 */
-	private String lineLyrics = null;
+	private String lineLyrics = "";
 	/**
 	 * 歌词数组，用来分隔每个歌词
 	 */
@@ -92,4 +92,21 @@ public class KscLyricsLineInfo {
 		this.wordsDisInterval = wordsDisInterval;
 	}
 
+	/**
+	 * 获取ksc歌词格式
+	 * 
+	 * @return
+	 */
+	public String getKscString() {
+		String wordsDisIntervalStr = "";
+		for (int i = 0; i < wordsDisInterval.length; i++) {
+			if (i != 0) {
+				wordsDisIntervalStr += ",";
+			}
+			wordsDisIntervalStr += wordsDisInterval[i];
+		}
+		String ksc = "karaoke.add('" + startTimeStr + "', '" + endTimeStr
+				+ "', '" + lineLyrics + "', '" + wordsDisIntervalStr + "');";
+		return ksc;
+	}
 }
