@@ -28,6 +28,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.happy.common.Constants;
 import com.happy.manage.MediaManage;
 import com.happy.model.KscLyricsLineInfo;
@@ -464,7 +466,7 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 		String lrcComs[] = lrcCom.split("\n");
 		for (int i = 0; i < lrcComs.length; i++) {
 			String lrcComTxt = lrcComs[i];
-			if (lrcComTxt.equals("")) {
+			if (StringUtils.isEmpty(lrcComTxt) || StringUtils.isBlank(lrcComTxt)) {
 				continue;
 			}
 			KscLyricsLineInfo kscLyricsLineInfo = new KscLyricsLineInfo();
