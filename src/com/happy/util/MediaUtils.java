@@ -6,7 +6,7 @@ import java.util.Date;
 
 import com.happy.model.SongInfo;
 import com.tulskiy.musique.audio.AudioFileReader;
-import com.tulskiy.musique.playlist.Track;
+import com.tulskiy.musique.model.Track;
 import com.tulskiy.musique.system.TrackIO;
 import com.tulskiy.musique.util.AudioMath;
 

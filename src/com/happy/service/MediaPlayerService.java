@@ -18,7 +18,7 @@ import com.tulskiy.musique.audio.player.Player;
 import com.tulskiy.musique.audio.player.PlayerEvent;
 import com.tulskiy.musique.audio.player.PlayerEvent.PlayerEventCode;
 import com.tulskiy.musique.audio.player.PlayerListener;
-import com.tulskiy.musique.playlist.Track;
+import com.tulskiy.musique.model.Track;
 import com.tulskiy.musique.system.TrackIO;
 import com.tulskiy.musique.util.AudioMath;
 
