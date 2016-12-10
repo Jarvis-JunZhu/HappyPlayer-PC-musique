@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="haplayer/libs/log4j-1.2.8.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="haplayer/libs/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="haplayer/libs/musique/alacdecoder-1.0.jar"/>
 	<classpathentry kind="lib" path="haplayer/libs/musique/cuelib-1.2.1.jar"/>
 	<classpathentry kind="lib" path="haplayer/libs/musique/discogs-0.1.jar"/>

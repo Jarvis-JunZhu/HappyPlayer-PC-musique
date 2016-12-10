@@ -28,8 +28,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.happy.common.Constants;
 import com.happy.manage.MediaManage;
 import com.happy.model.KscLyricsLineInfo;
@@ -39,6 +37,7 @@ import com.happy.model.SongMessage;
 import com.happy.observable.ObserverManage;
 import com.happy.service.MediaPlayerService;
 import com.happy.util.MediaUtils;
+import com.happy.util.StringUtils;
 import com.happy.widget.slider.MakeLrcSlider;
 
 /**
