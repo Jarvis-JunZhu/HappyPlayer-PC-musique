@@ -526,7 +526,7 @@ public class MakeLrcZhiZuoPanel extends JPanel implements Observer {
 			}
 		}
 		if (!temp.equals("")) {
-			lrcStack.push(temp);
+			lrcStack.push("[" + temp + "]");
 			temp = "";
 		}
 
